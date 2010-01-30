@@ -244,6 +244,9 @@ public class SkunkJets {
 		if (Keyboard.isKeyDown(Keyboard.KEY_SUBTRACT)) {
 			//angleRotation -= 0.1f;
 		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+			gameObjects.add(redCannon.fire());
+		}
 		//throttle
 		/*if (quadVelocity.x < -MAX_SPEED) {
 			quadVelocity.x = -MAX_SPEED;

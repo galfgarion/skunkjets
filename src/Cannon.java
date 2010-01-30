@@ -3,14 +3,18 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 class Cannon implements GameObject {
+	
+	static final float DEG_TO_RAD =  (float) Math.PI / 180.0f;
+	
 	private float centerX, centerY, orientation, radius;
 	private float red, green, blue;
+	private float projectileSpeed = 0.5f;
 
 	public Cannon(float centerX, float centerY, float radius, float orientation) {
 		this.centerX = centerX;
 		this.centerY = centerY;
 		this.radius = radius;
-		this.orientation = orientation;
+		this.orientation = orientation; // degrees, 0.0 is pointed up positive y axis
 		this.red = 1.0f;
 		this.green = 0.0f;
 		this.blue = 1.0f;
@@ -53,6 +57,22 @@ class Cannon implements GameObject {
 			GL11.glVertex2f(x, y);
 		}
 		GL11.glEnd();
+	}
+	
+	public double getOrientation() {
+		return orientation;
+	}
+	
+	public Projectile fire() {
+		
+		float velX = (float) (projectileSpeed * Math.cos(orientation * DEG_TO_RAD));
+		float velY = (float) (projectileSpeed * Math.sin(orientation * DEG_TO_RAD));
+		
+		Vector2f velocity = new Vector2f(velX, velY);
+		
+		Projectile bullet = new Projectile(new Vector2f(centerX, centerY), velocity);
+		
+		return bullet;
 	}
 
 	public void draw() {
