@@ -2,7 +2,7 @@
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
-class Cannon implements Renderable {
+class Cannon implements GameObject {
 	private float centerX, centerY, orientation, radius;
 	private float red, green, blue;
 
@@ -30,6 +30,8 @@ class Cannon implements Renderable {
 	public void turnRight(float changeInDegrees) {
 		orientation -= changeInDegrees;
 	}
+	
+	public void update(double timeDelta) { }
 
 	private static void drawCircle() {
 		final int numVertices = 60;
@@ -53,7 +55,7 @@ class Cannon implements Renderable {
 		GL11.glEnd();
 	}
 
-	public void render() {
+	public void draw() {
 		GL11.glPushMatrix();
 		GL11.glTranslated(centerX, centerY, 0);
 		GL11.glScalef(radius, radius, 1);

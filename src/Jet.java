@@ -6,17 +6,6 @@ public class Jet implements GameObject {
 	public Vector2f position;
 	public Vector2f velocity;
 	
-	public Jet() {
-		position = new Vector2f(0.0f, 0.0f);
-	}
-	
-	/*
-	public Jet(float x, float y) {
-		position = new Vector2f(x, y);
-		velocity = new Vector2f(0.0f, 0.01f);
-	}
-	*/
-	
 	public Jet(Vector2f position, Vector2f velocity) {
 		this.position = position;
 		this.velocity = velocity;
