@@ -15,7 +15,6 @@ public class Projectile implements GameObject {
 		this.velocity = velocity;
 	}
 
-	@Override
 	public void draw() {
 		// TODO Auto-generated method stub
 		
@@ -40,7 +39,6 @@ public class Projectile implements GameObject {
 		
 	}
 
-	@Override
 	public void update(double timeDelta) {
 		// TODO Auto-generated method stub
 		Vector2f moveDelta = new Vector2f(velocity);

@@ -35,6 +35,7 @@ import java.util.List;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -55,6 +56,7 @@ public class SkunkJets {
 	private DisplayMode			mode;
 	
 	Cannon redCannon;
+	private int lastButton = 0;
 	
 	Timer mainTimer = new Timer();
 	List<GameObject> gameObjects = new LinkedList<GameObject>();
@@ -89,7 +91,7 @@ public class SkunkJets {
 			Display.create();
 			glInit();
 
-			gameObjects.add(redCannon = new Cannon(0, -1, 1/20f, 45).setColor(1.0f, 0.0f, 0.0f));
+			gameObjects.add(redCannon = new Cannon(0, -1, 1/20f, 90).setColor(1.0f, 0.0f, 0.0f));
 			gameObjects.add(new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
 			
 		} catch (Exception e) {
@@ -111,6 +113,7 @@ public class SkunkJets {
 			if (Display.isVisible()) {
 				// check keyboard input
 				processKeyboard();
+				processMouse();
 				// do "game" logic, and render it
 				logic(timeDelta);
 				render();
@@ -130,6 +133,28 @@ public class SkunkJets {
 			Display.update();
 		}
 	}
+	
+	private void processMouse() {    // iterate all events, use the last button down
+		while(Mouse.next()) {
+			if(Mouse.getEventButton() != -1 && Mouse.getEventButtonState()) {
+				lastButton = Mouse.getEventButton();
+			}
+		}
+		
+		float x = 2f * Mouse.getX() / mode.getWidth() - 1;
+		float y = 2f * Mouse.getY() / mode.getHeight() - 1;
+		float dx = x;
+		float dy = y + 1;
+		float deg = 90;
+		if (dx != 0) {
+			deg = (float)Math.toDegrees(Math.atan(dy / dx));
+			if (deg < 0)
+				deg += 180;
+		}
+		redCannon.orientation = deg;
+		
+	}
+	
 	/**
 	 * Performs the logic
 	 */
@@ -232,10 +257,10 @@ public class SkunkJets {
 			//quadVelocity.y -= 0.1f;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-			redCannon.turnRight(1f);
+			//redCannon.turnRight(1f);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-			redCannon.turnLeft(1f);
+			//redCannon.turnLeft(1f);
 			//quadVelocity.x -= 0.1f;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_ADD)) {
