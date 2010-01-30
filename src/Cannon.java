@@ -9,6 +9,10 @@ class Cannon implements GameObject {
 	private float centerX, centerY, orientation, radius;
 	private float red, green, blue;
 	private float projectileSpeed = 0.5f;
+	
+	private double lastFireTime = 0;
+	
+	private Projectile curProjectile = new Projectile(null, null);
 
 	public Cannon(float centerX, float centerY, float radius, float orientation) {
 		this.centerX = centerX;
@@ -63,7 +67,15 @@ class Cannon implements GameObject {
 		return orientation;
 	}
 	
-	public Projectile fire() {
+	public boolean canFire(double time) {
+		
+		return (time - lastFireTime >= 1.0f / curProjectile.maxFiringRate());
+		
+	}
+	
+	public Projectile fire(double time) {
+		
+		lastFireTime = time;
 		
 		float velX = (float) (projectileSpeed * Math.cos(orientation * DEG_TO_RAD));
 		float velY = (float) (projectileSpeed * Math.sin(orientation * DEG_TO_RAD));

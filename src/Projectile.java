@@ -6,6 +6,8 @@ public class Projectile implements GameObject {
 	
 	Vector2f position, velocity;
 	
+	private static float maxFiringRate = 1;
+	
 
 	
 	public Projectile(Vector2f position, Vector2f velocity) {
@@ -44,6 +46,12 @@ public class Projectile implements GameObject {
 		Vector2f moveDelta = new Vector2f(velocity);
 		moveDelta.scale((float)timeDelta);
 		Vector2f.add(position, moveDelta, position);	
+	}
+	
+	
+	// max rounds per second
+	public float maxFiringRate() {
+		return maxFiringRate;
 	}
 
 }

@@ -245,7 +245,10 @@ public class SkunkJets {
 			//angleRotation -= 0.1f;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			gameObjects.add(redCannon.fire());
+			double time = mainTimer.getTime();
+			if(redCannon.canFire(time)) {
+				gameObjects.add(redCannon.fire(time));
+			}
 		}
 		//throttle
 		/*if (quadVelocity.x < -MAX_SPEED) {
