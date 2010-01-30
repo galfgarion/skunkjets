@@ -1,7 +1,7 @@
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
-public class Jet {
+public class Jet implements GameObject {
 	
 	public Vector2f position;
 	public Vector2f velocity;
@@ -10,18 +10,22 @@ public class Jet {
 		position = new Vector2f(0.0f, 0.0f);
 	}
 	
+	/*
 	public Jet(float x, float y) {
 		position = new Vector2f(x, y);
 		velocity = new Vector2f(0.0f, 0.01f);
 	}
+	*/
 	
 	public Jet(Vector2f position, Vector2f velocity) {
 		this.position = position;
 		this.velocity = velocity;
 	}
 	
-	public void update() {
-		Vector2f.add(position, velocity, position);
+	public void update(double timeDelta) {
+		Vector2f moveDelta = new Vector2f(velocity);
+		moveDelta.scale((float)timeDelta);
+		Vector2f.add(position, moveDelta, position);
 	}
 	
 	public void draw() {

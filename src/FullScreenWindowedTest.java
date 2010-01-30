@@ -38,6 +38,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.Timer;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -63,7 +64,12 @@ public class FullScreenWindowedTest {
 	/** Max speed of all changable attributes */
 	private static final float	MAX_SPEED		= 20.0f;
 	
-	ArrayList<Jet> gameObjects = new ArrayList<Jet>();
+	ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+	
+	// Timer stuff
+	Timer updateTimer;
+	
+	double prevTime = 0.0;
 
 
 	/**
@@ -91,7 +97,10 @@ public class FullScreenWindowedTest {
 	private void initialize() {
 		
 		//TODO
-		gameObjects.add(new Jet(new Vector2f(0.0f, -0.5f), new Vector2f(0.0f, 0.02f)));
+		gameObjects.add(new Jet(new Vector2f(0.0f, -0.5f), new Vector2f(0.0f, 1.0f / 5.0f)));
+		
+		updateTimer = new Timer();
+
 		
 		try {
 			//find displaymode
@@ -109,7 +118,11 @@ public class FullScreenWindowedTest {
 	 * Runs the main loop of the "test"
 	 */
 	private void mainLoop() {
+				
 		while (!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
+			
+			Timer.tick();
+			
 			if (Display.isVisible()) {
 				// check keyboard input
 				processKeyboard();
@@ -136,6 +149,13 @@ public class FullScreenWindowedTest {
 	 * Performs the logic
 	 */
 	private void logic() {
+		
+		double newTime = updateTimer.getTime();
+		double timeDelta = newTime - prevTime;
+		prevTime = newTime;
+		
+		System.err.println(timeDelta);
+			
 		angle += angleRotation;
 		if (angle > 90.0f) {
 			angle = 0.0f;
@@ -151,8 +171,8 @@ public class FullScreenWindowedTest {
 			quadVelocity.y *= -1;
 		}
 		
-		for(Jet jet: gameObjects) {
-			jet.update();
+		for(GameObject jet: gameObjects) {
+			jet.update(timeDelta);
 		}
 	}
 	private void render() {
@@ -160,7 +180,7 @@ public class FullScreenWindowedTest {
 		GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 		
-		for(Jet jet: gameObjects) {
+		for(GameObject jet: gameObjects) {
 			jet.draw();	
 		}
 
@@ -169,10 +189,12 @@ public class FullScreenWindowedTest {
 	
 
 	
+	/*
 	void spawnJet() {
 		System.err.println("Spawnjet()");
 		gameObjects.add(new Jet(0.0f, -mode.getHeight() / 2.0f));
 	}
+	*/
 	
 	/**
 	 * Processes keyboard input
