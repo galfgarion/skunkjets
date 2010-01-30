@@ -3,8 +3,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 class Cannon implements GameObject {
-	private float centerX, centerY, orientation, radius;
-	private float red, green, blue;
+	float centerX, centerY, orientation, radius;
+	float red, green, blue;
 
 	public Cannon(float centerX, float centerY, float radius, float orientation) {
 		this.centerX = centerX;
@@ -21,14 +21,6 @@ class Cannon implements GameObject {
 		this.green = green;
 		this.blue = blue;
 		return this;
-	}
-	
-	public void turnLeft(float changeInDegrees) {
-		orientation += changeInDegrees;
-	}
-	
-	public void turnRight(float changeInDegrees) {
-		orientation -= changeInDegrees;
 	}
 	
 	public void update(double timeDelta) { }
