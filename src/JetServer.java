@@ -1,4 +1,4 @@
-package src;
+
 import java.net.*;
 import java.util.ArrayList;
 import java.io.*;
@@ -16,14 +16,25 @@ public class JetServer {
 
 		try {
 			serverSocket = new ServerSocket(1234);
+			
+			 InetAddress addr = InetAddress.getLocalHost();
+
+			    // Get IP Address
+			    byte[] ipAddr = addr.getAddress();
+			
+			    for (int i = 0; i < ipAddr.length; i++) {
+			    	System.out.print(((int)ipAddr[i] & 0xFF) + " ");
+			    }
+			    System.out.println();
+			    
+			
 		} catch (IOException e) {
 			System.err.println("Could not listen on port: 1234.");
 			System.exit(-1);
 		}
 
 		while (listening) {
-			JetServerThread temp = new JetServerThread(this, serverSocket
-					.accept());
+			JetServerThread temp = new JetServerThread(this, serverSocket.accept());
 			people.add(temp);
 			temp.start();
 		}

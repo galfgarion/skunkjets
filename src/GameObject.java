@@ -1,7 +1,11 @@
+import org.lwjgl.util.vector.Vector2f;
 
-public interface GameObject {
+
+public abstract class GameObject {
+
+	public Vector2f position;
+	public Vector2f velocity;
 	
-	public void update(double timeDelta);
-	public void draw();
-	
+	public abstract void update(double timeDelta);
+	public abstract void draw();
 }

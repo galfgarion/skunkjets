@@ -1,22 +1,21 @@
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
-public class Jet implements GameObject {
-	
-	public Vector2f position;
-	public Vector2f velocity;
+public class Jet extends GameObject {
 	
 	public Jet(Vector2f position, Vector2f velocity) {
 		this.position = position;
 		this.velocity = velocity;
 	}
 	
+	@Override
 	public void update(double timeDelta) {
 		Vector2f moveDelta = new Vector2f(velocity);
 		moveDelta.scale((float)timeDelta);
 		Vector2f.add(position, moveDelta, position);
 	}
 	
+	@Override
 	public void draw() {
 		GL11.glPushMatrix();
 		{

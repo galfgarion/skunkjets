@@ -2,7 +2,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 
-public class Projectile implements GameObject {
+public class Projectile extends GameObject {
 	
 	Vector2f position, velocity;
 	
@@ -15,6 +15,7 @@ public class Projectile implements GameObject {
 		this.velocity = velocity;
 	}
 
+	@Override
 	public void draw() {
 		// TODO Auto-generated method stub
 		
@@ -39,6 +40,7 @@ public class Projectile implements GameObject {
 		
 	}
 
+	@Override
 	public void update(double timeDelta) {
 		// TODO Auto-generated method stub
 		Vector2f moveDelta = new Vector2f(velocity);

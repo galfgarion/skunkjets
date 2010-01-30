@@ -1,34 +1,3 @@
-/* 
- * Copyright (c) 2002-2008 LWJGL Project
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are 
- * met:
- * 
- * * Redistributions of source code must retain the above copyright 
- *   notice, this list of conditions and the following disclaimer.
- *
- * * Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- *
- * * Neither the name of 'LWJGL' nor the names of 
- *   its contributors may be used to endorse or promote products derived 
- *   from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
- * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, 
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 
 import java.util.LinkedList;
 import java.util.List;
@@ -43,20 +12,14 @@ import org.lwjgl.util.Timer;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
-/**
- * 
- * Tests switching between windowed and fullscreen
- * 
- * @author Brian Matzon <brian@matzon.dk>
- * @version $Revision$
- * $Id$
- */
 public class SkunkJets {
-	/** Intended deiplay mode */
-	private DisplayMode			mode;
+	/** Intended display mode */
+	private DisplayMode mode;
+	
+	//JetClient client;
 	
 	Cannon redCannon;
-	private int lastButton = 0;
+	Jet jetTemplate;
 	
 	Timer mainTimer = new Timer();
 	List<GameObject> gameObjects = new LinkedList<GameObject>();
@@ -85,6 +48,8 @@ public class SkunkJets {
 	 */
 	private void initialize() {
 		try {
+			//client = new JetClient();
+			
 			//find displaymode
 			switchMode();
 			// start of in windowed mode
@@ -135,12 +100,6 @@ public class SkunkJets {
 	}
 	
 	private void processMouse() {    // iterate all events, use the last button down
-		while(Mouse.next()) {
-			if(Mouse.getEventButton() != -1 && Mouse.getEventButtonState()) {
-				lastButton = Mouse.getEventButton();
-			}
-		}
-		
 		float x = 2f * Mouse.getX() / mode.getWidth() - 1;
 		float y = 2f * Mouse.getY() / mode.getHeight() - 1;
 		float dx = x;
@@ -155,9 +114,6 @@ public class SkunkJets {
 		
 	}
 	
-	/**
-	 * Performs the logic
-	 */
 	private void logic(double timeDelta) {
 		for (GameObject gameObject : gameObjects)
 			gameObject.update(timeDelta);
@@ -193,43 +149,8 @@ public class SkunkJets {
 		for (GameObject gameObject : gameObjects) {
 			gameObject.draw();
 		}
-		
-		/*GL11.glPushMatrix();
-		{
-			GL11.glTranslatef(0f, 0.0f, 0.0f);
-			GL11.glColor3f(1.0f, 0.0f, 0.0f);
-			GL11.glBegin(GL11.GL_QUADS);
-			{
-				GL11.glVertex2f(10, 10);
-				GL11.glVertex2f(20, 10);
-				GL11.glVertex2f(20, 20);
-				GL11.glVertex2f(10, 20);
-			}
-			GL11.glEnd();
-		}
-		GL11.glPopMatrix();*/
-		/*
-		// draw white quad
-		GL11.glPushMatrix();
-		{
-			GL11.glTranslatef(quadPosition.x, quadPosition.y, 0);
-			GL11.glRotatef(angle, 0.0f, 0.0f, 1.0f);
-			GL11.glColor3f(1.0f, 1.0f, 1.0f);
-			GL11.glBegin(GL11.GL_QUADS);
-			{
-				GL11.glVertex2i(-50, -50);
-				GL11.glVertex2i(50, -50);
-				GL11.glVertex2i(50, 50);
-				GL11.glVertex2i(-50, 50);
-			}
-			GL11.glEnd();
-		}
-		GL11.glPopMatrix();
-		*/
 	}
-	/**
-	 * Processes keyboard input
-	 */
+	
 	private void processKeyboard() {
 		//check for fullscreen key
 		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
@@ -272,28 +193,11 @@ public class SkunkJets {
 		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
 			double time = mainTimer.getTime();
 			if(redCannon.canFire(time)) {
-				gameObjects.add(redCannon.fire(time));
+				GameObject missile = redCannon.fire(time); 
+				//connection.sendNewGameObject(missile);
+				gameObjects.add(missile);
 			}
 		}
-		//throttle
-		/*if (quadVelocity.x < -MAX_SPEED) {
-			quadVelocity.x = -MAX_SPEED;
-		}
-		if (quadVelocity.x > MAX_SPEED) {
-			quadVelocity.x = MAX_SPEED;
-		}
-		if (quadVelocity.y < -MAX_SPEED) {
-			quadVelocity.y = -MAX_SPEED;
-		}
-		if (quadVelocity.y > MAX_SPEED) {
-			quadVelocity.y = MAX_SPEED;
-		}
-		if (angleRotation < 0.0f) {
-			angleRotation = 0.0f;
-		}
-		if (angleRotation > MAX_SPEED) {
-			angleRotation = MAX_SPEED;
-		}*/
 	}
 	/**
 	 * Cleans up the test

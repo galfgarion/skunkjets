@@ -2,7 +2,7 @@
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
-class Cannon implements GameObject {
+class Cannon extends GameObject {
 	static final float DEG_TO_RAD =  (float) Math.PI / 180.0f;
 	
 	float orientation;
@@ -31,6 +31,7 @@ class Cannon implements GameObject {
 		return this;
 	}
 	
+	@Override
 	public void update(double timeDelta) { }
 
 	private static void drawCircle() {
@@ -79,6 +80,7 @@ class Cannon implements GameObject {
 		return bullet;
 	}
 
+	@Override
 	public void draw() {
 		GL11.glPushMatrix();
 		GL11.glTranslated(centerX, centerY, 0);
