@@ -45,6 +45,8 @@ public class SkunkJets
 	ArrayList<Jet> jets = new ArrayList<Jet>();
 	Jet jet;
 	int curJet = 0;
+	
+	private HealthBar healthBar = new HealthBar();
 
 	private Socket jetSocket;
 	PrintWriter out;
@@ -54,6 +56,7 @@ public class SkunkJets
 	private ReadIn ri;
 
 	private static float lastJetSpawnTime = 0;
+	
 
 	/**
 	 * Creates a FullScreenWindowedTest
@@ -264,20 +267,34 @@ public class SkunkJets
 				}
 			}
 		}
+		
+		/*
+		for(Jet jet: jets) {
+			if(jet.getPosition().y < 0.0f) {
+				System.err.println("Jet reached base at " + jet.getPosition().y);
+				destroyedObjects.add(jet);
+				healthBar.decrease();
+			}
+		}
+		*/
 
 		// explode the objects
 		for(GameObject obj : destroyedObjects) {
-         explosions.add(new Explosion(obj.getPosition()));
+			explosions.add(new Explosion(obj.getPosition()));
 			gameObjects.remove(obj);
+			jets.remove(obj);
 		}
 		
 		for (Explosion obj : explosions)
 		{
 		   if (obj.update(timeDelta)) destroyedExplosions.add(obj);
 		}
+
 		
 		for (Explosion obj : destroyedExplosions)
 		   explosions.remove(obj);
+		
+
 	}
 
 	private void render()
@@ -299,6 +316,8 @@ public class SkunkJets
 		}
 		for (Explosion obj : explosions)
 		   obj.draw();
+		
+		healthBar.draw();
 	}
 
 	private void processKeyboard()
@@ -330,6 +349,15 @@ public class SkunkJets
 			}
 			jet = jets.get(curJet);
 		}
+		
+		if(isNewKeyPress(Keyboard.KEY_0)) {
+			healthBar.increase();
+		}
+		
+		if(isNewKeyPress(Keyboard.KEY_9)) {
+			healthBar.decrease();
+		}
+		
 		else if (Keyboard.isKeyDown(Keyboard.KEY_Q))
 		{
 			curJet--;
@@ -435,6 +463,8 @@ public class SkunkJets
 		if(DEBUG) System.err.println("spawnJet");
 	
 		gameObjects.add(new Jet(position, velocity, false));
+		//TODO unify handling spawning/removal of jets
+		jets.add(jet);
 	}
 
 	/**
