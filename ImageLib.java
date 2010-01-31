@@ -18,11 +18,6 @@ public class ImageLib {
    static Hashtable<String,Integer> ImageStrings = new Hashtable<String,Integer>();
    static int keyValCurrent;
    
-   public ImageLib() 
-   {
-      Images = new Hashtable<Integer,GLImage>();
-   }
-   
    // This class is to present a small level of abstraction between the
    // game management code and the display of each 2D sprite
    public static int getImage(String filename)
@@ -45,13 +40,13 @@ public class ImageLib {
       if (!Images.containsKey(imgKey)) return -1;
       
       img = (GLImage) Images.get(imgKey);
-      float width = ((float)img.w) * 2 /Display.getDisplayMode().getHeight();
-      float height = ((float)img.h * 2 /Display.getDisplayMode().getHeight());
+      float width = ((float)img.w) * 2 / Display.getDisplayMode().getHeight();
+      float height = ((float)img.h * 2 / Display.getDisplayMode().getHeight());
       drawImage(img, x, y, width, height, angle);
       return 0;
    }
    
-   // BAD METHOD***
+   // BEWARE: Be sure w and h are the correct values for the coordinate system
    public static int drawImage(int imgVal, float x, float y, float angle, int w, int h)
    {
       Integer imgKey = new Integer(imgVal);
@@ -82,7 +77,9 @@ public class ImageLib {
       //pushAttribOrtho();
       GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_TEXTURE_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_LIGHTING_BIT);
       // set color to white
-      //GL11.glColor4f(1,1,1,1);   // don't force color to white (may want to tint image)
+      GL11.glEnable(GL11.GL_BLEND);
+      GL11.glColor4f(1f,1f,1f,1f);   // don't force color to white (may want to tint image)
+      GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         // activate the image texture
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,img.textureHandle);
         // draw a textured quad
@@ -105,6 +102,7 @@ public class ImageLib {
            GL11.glEnd();
         }
         GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_BLEND);
         // return to previous settings
         //popAttrib();
         GL11.glPopAttrib();
@@ -153,6 +151,8 @@ public class ImageLib {
         // Set up the anisotropic filter.
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, max_a.get(0));
      }
+     
+     GL11.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
 
        // Create the texture from pixels
        GL11.glTexImage2D(GL11.GL_TEXTURE_2D,

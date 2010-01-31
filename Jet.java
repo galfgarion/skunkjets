@@ -9,13 +9,6 @@ public class Jet extends GameObject {
 		super(position, velocity);
 	}
 	
-	@Override
-	public void update(double timeDelta) {
-		Vector2f moveDelta = new Vector2f(getVelocity());
-		moveDelta.scale((float)timeDelta);
-		Vector2f.add(getPosition(), moveDelta, getPosition());
-	}
-	
 	public void speedUp() {
 		this.getVelocity().scale(70/69f);
 		float speed = this.getVelocity().length();
