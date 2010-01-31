@@ -28,13 +28,15 @@ public class SkunkJets
 	// JetClient client;
 
 	Cannon redCannon;
-	Jet jet;
 
 	public static Timer mainTimer = new Timer();
 	ProjectileType rocket = new RocketProjectile();
 	ProjectileType beam = new BeamProjectile();
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
+	
 	ArrayList<Jet> jets = new ArrayList<Jet>();
+	Jet jet;
+	int curJet = 0;
 
 	private Socket jetSocket;
 	PrintWriter out;
@@ -84,9 +86,8 @@ public class SkunkJets
 
 	private void switchMode() throws LWJGLException
 	{
-		mode = findDisplayMode(Display.getDisplayMode().getWidth(), Display
-				.getDisplayMode().getHeight(), Display.getDisplayMode()
-				.getBitsPerPixel());
+		mode = findDisplayMode(Display.getDisplayMode().getWidth(),
+			Display.getDisplayMode().getHeight(), Display.getDisplayMode().getBitsPerPixel());
 		Display.setDisplayModeAndFullscreen(mode);
 	}
 
@@ -105,12 +106,14 @@ public class SkunkJets
 			
 			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
 			redCannon.setCurProjectile(rocket);
-			jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.0f, 0.1f), true);
-			jets.add(jet);
-			gameObjects.add(jet);
+			
+			Jet newJet = new Jet(new Vector2f(-0.5f, -1f), new Vector2f(0.0f, 0.05f), true);
+			jets.add(newJet);
+			gameObjects.add(newJet);
+			jet = newJet;
 
 			// TODO testing
-			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0f, 0f), false));
+			gameObjects.add(new Jet(new Vector2f(0, 0.5f), new Vector2f(0f, 0f), false));
 
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
@@ -118,7 +121,6 @@ public class SkunkJets
 		{
 			e.printStackTrace();
 		}
-
 	}
 
 	private void connectToServer()
@@ -136,8 +138,7 @@ public class SkunkJets
 		}
 		catch (IOException e)
 		{
-			System.err
-					.println("Couldn't get I/O for the connection to: Jet Socket. So Exiting");
+			System.err.println("Couldn't get I/O for the connection to: Jet Socket. So Exiting");
 			System.exit(-1);
 		}
 		ri = new ReadIn(this);
@@ -182,6 +183,7 @@ public class SkunkJets
 				{
 					if(canSpawnJet()) {
 						Jet newJet = new Jet(new Vector2f(p2w_x(Mouse.getX()), -1.0f), new Vector2f(0, 0.2f), true);
+						jets.add(newJet);
 						gameObjects.add(newJet);
 						lastJetSpawnTime = mainTimer.getTime();
 					}
@@ -306,6 +308,25 @@ public class SkunkJets
 			jet.turnLeft();
 		}
 
+		if (Keyboard.isKeyDown(Keyboard.KEY_E))
+		{
+			curJet++;
+			if (curJet >= jets.size())
+			{
+				curJet = 0;
+			}
+			jet = jets.get(curJet);
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_Q))
+		{
+			curJet--;
+			if (curJet < 0)
+			{
+				curJet = jets.size() - 1;
+			}
+			jet = jets.get(curJet);
+		}
+		
 		// check weapon switch
 		if (Keyboard.isKeyDown(Keyboard.KEY_1))
 		{
