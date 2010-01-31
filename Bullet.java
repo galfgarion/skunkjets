@@ -4,9 +4,10 @@ public class Bullet extends GameObject
 {
 	int img;
 	
-	public Bullet(Vector2f position, int img)
+	public Bullet(Vector2f position, int img, boolean myTeam)
 	{
-		super(position, new Vector2f(0, 0));
+		super(position, new Vector2f(0, 0), myTeam); // myTeam is setting visibility
+		this.myTeam = myTeam;
 		this.img = img;
 		radius = 0.15;
 	}

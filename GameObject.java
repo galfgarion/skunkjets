@@ -12,12 +12,17 @@ public abstract class GameObject {
 	public int sprite;
 	
 	protected double radius; // for bounding sphere collision
-
-	public GameObject(Vector2f position, Vector2f velocity) {
+	protected double visibilityRadius; // for shroud testing
+	protected boolean visible; // whether or not the object should be seen
+	protected boolean myTeam;
+	
+	public GameObject(Vector2f position, Vector2f velocity, boolean vis) {
 		assert position != null;
 		assert velocity != null;
 		this.position = position;
 		this.velocity = velocity;
+		this.visible  = vis;
+		this.myTeam = false; // default to false (some objects are not owned, e.g. Tornadoes)
 	}
 
 	public void setVelocity(Vector2f velocity) {
@@ -79,6 +84,25 @@ public abstract class GameObject {
 		
 	}
 
+	public boolean isVisible(GameObject other)
+	{
+		Vector2f distvec = new Vector2f();
+		
+		if(other == null || this.position == null || other.position == null)
+			return false;
+		
+		Vector2f.sub(this.position, other.position, distvec);
+		double dist = distvec.length();
+		
+		
+		boolean collision = dist < this.visibilityRadius + other.visibilityRadius;
+		if(collision)
+			System.err.println("I see you!!!");
+		
+		return collision;
+		
+	}	
+	
 	public void draw() {
 		GL11.glPushMatrix();
 		{

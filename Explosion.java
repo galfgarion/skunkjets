@@ -10,7 +10,7 @@ public class Explosion extends GameObject
    int index = 0;
    
    public Explosion(Vector2f position) {
-      super(position, new Vector2f(0, 0));
+      super(position, new Vector2f(0, 0), true); // Explosions always visible
       
    }
    

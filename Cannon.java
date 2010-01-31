@@ -16,9 +16,10 @@ class Cannon extends GameObject
 	private ProjectileType curProjectile;
 	ArrayList<Bullet> bullets;
 
-	public Cannon(Vector2f center, float radius, float orientation)
+	public Cannon(Vector2f center, float radius, float orientation, boolean myTeam)
 	{
-		super(center, new Vector2f(0, 0));
+		super(center, new Vector2f(0, 0), myTeam);
+		this.myTeam = myTeam;
 		this.radius = radius;
 		this.orientation = orientation; // degrees, 90.0 is pointed up positive y axis
 		this.red = 1.0f;

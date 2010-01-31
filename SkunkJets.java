@@ -37,8 +37,8 @@ public class SkunkJets
 	Cannon redCannon;
 
 	public static Timer mainTimer = new Timer();
-	ProjectileType rocket = new RocketProjectile();
-	ProjectileType beam = new BeamProjectile();
+	ProjectileType rocket = new RocketProjectile(true); //TODO construct with team variable (not hardcoded true)
+	ProjectileType beam = new BeamProjectile(true); //TODO construct with team variable (not hardcoded true)
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
 	
 	LinkedList<Explosion> explosions = new LinkedList<Explosion>();
@@ -111,8 +111,8 @@ public class SkunkJets
 			Display.create();
 			glInit();
 
-			
-			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
+			// TODO cannon should be constructed based on myTeam? variable 
+			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90, true).setColor(1.0f, 0.0f, 0.0f));
 			redCannon.setCurProjectile(rocket);
 			
 			Jet newJet = new Jet(new Vector2f(-0.5f, -1f), new Vector2f(0.0f, 0.05f), true);

@@ -5,14 +5,15 @@ import org.lwjgl.util.vector.Vector2f;
 public class Jet extends GameObject {
 	
 	int img;
-	boolean myTeam;
 
 	public static float speed = 0.2f;
 	
 	public Jet(Vector2f position, Vector2f velocity, boolean myTeam) {
-		super(position, velocity);
+		// Visibility of jet defaults to true if it's yours, false if it's the enemy's
+		super(position, velocity, myTeam);
 		this.myTeam = myTeam;
 		radius = 0.05;
+		visibilityRadius = 0.2;
 		if (myTeam)
 		{
 			img = ImageLib.getImage("Images/Jet blue.png");
@@ -65,6 +66,8 @@ public class Jet extends GameObject {
 		this.getVelocity().x = (float)Math.cos(angleRads) * distance;
 		this.getVelocity().y = (float)Math.sin(angleRads) * distance;
 	}
+
+
 	
 	@Override
 	public void innerDraw() {
