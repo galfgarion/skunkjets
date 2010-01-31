@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.lwjgl.LWJGLException;
@@ -49,6 +50,7 @@ public class SkunkJets {
 	 */
 	private void initialize()
 	{
+			
 		try
 		{
 			// find displaymode
@@ -59,6 +61,9 @@ public class SkunkJets {
 
 			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
 			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
+			
+			// TODO testing
+			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0,0)));
 
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
@@ -138,6 +143,22 @@ public class SkunkJets {
 	private void logic(double timeDelta) {
 		for (GameObject gameObject : gameObjects)
 			gameObject.update(timeDelta);
+		
+		ArrayList<GameObject> destroyedObjects = new ArrayList<GameObject>();
+		for(int i = 0; i < gameObjects.size(); i++) {
+			for(int j=i + 1; j < gameObjects.size(); j++) {
+				if(gameObjects.get(i) != redCannon && gameObjects.get(j) != redCannon &&
+						gameObjects.get(i).collide(gameObjects.get(j))) {
+					destroyedObjects.add(gameObjects.get(i));
+					destroyedObjects.add(gameObjects.get(j));
+				}
+			}
+		}
+		
+		// explode the objects
+		for(GameObject obj : destroyedObjects) {
+			gameObjects.remove(obj);
+		}
 	}
 	
 	private void render() {
