@@ -214,17 +214,6 @@ public class SkunkJets
 							gameObjects.add(missile);
 						}
 					}
-					else if (lastButton == 1)
-					{
-						if(canSpawnJet()) {
-							Jet newJet = new Jet(new Vector2f(p2w_x(Mouse.getX()), -1.0f), new Vector2f(0, 0.2f), true);
-							jet = newJet;
-							curJet = jets.size() - 1;
-							jets.add(newJet);
-							gameObjects.add(newJet);
-							lastJetSpawnTime = mainTimer.getTime();
-						}
-					}
 				}
 	
 				Timer.tick();
@@ -452,6 +441,25 @@ public class SkunkJets
 			jet.turnLeft();
 		}
 
+		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE) && (canSpawnJet()))
+		{
+			float spawnLocation;
+			if (p2w_x(Mouse.getX()) > 0)
+			{
+				// Spawn on the left of the turret
+				spawnLocation = lowerXBound / 2.0f;
+			}
+			else 
+			{
+				spawnLocation = upperXBound / 2.0f;
+			}
+			Jet newJet = new Jet(new Vector2f(spawnLocation, -1.0f), new Vector2f(0, 0.2f), true);
+			jet = newJet;
+			curJet = jets.size() - 1;
+			jets.add(newJet);
+			gameObjects.add(newJet);
+			lastJetSpawnTime = mainTimer.getTime();
+		}		
 		if (Keyboard.isKeyDown(Keyboard.KEY_E))
 		{
 		   if  (!EDown)
