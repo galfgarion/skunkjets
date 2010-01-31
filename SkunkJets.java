@@ -31,6 +31,7 @@ public class SkunkJets
 	ProjectileType rocket = new RocketProjectile();
 	ProjectileType beam = new BeamProjectile();
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
+	ArrayList<Jet> jets = new ArrayList<Jet>();
 
 	private Socket jetSocket;
 	PrintWriter out;
@@ -54,6 +55,18 @@ public class SkunkJets
 		this.port_g = port_g;
 	}
 
+	public static float p2w_x(int x)
+	{
+		return (float) (((2 * x) + 1.0 - Display.getDisplayMode().getWidth()) / Display.getDisplayMode().getHeight());
+	}
+
+	public static float p2w_y(int y)
+	{
+		return (float) (((2 * y) + 1.0 - Display.getDisplayMode().getHeight()) / Display.getDisplayMode().getHeight());
+	}
+
+	
+	
 	/**
 	 * Executes the test
 	 */
@@ -87,7 +100,9 @@ public class SkunkJets
 			
 			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
 			redCannon.setCurProjectile(rocket);
-			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 0.1f), true));
+			jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.0f, 0.1f), true);
+			jets.add(jet);
+			gameObjects.add(jet);
 
 			// TODO testing
 			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0f, 0f), false));
@@ -160,7 +175,8 @@ public class SkunkJets
 				}
 				else if (lastButton == 1)
 				{
-					
+					Jet newJet = new Jet(new Vector2f(p2w_x(Mouse.getX()), -1.0f), new Vector2f(0, 0.2f), true);
+					gameObjects.add(newJet);
 				}
 			}
 
