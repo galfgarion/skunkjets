@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Map.Entry;
@@ -21,6 +22,7 @@ public class SkunkJets
 {
 	private static final int MAX_JETS = 5;
 	private static final int TIME_BETWEEN_JET_SPAWN = 5;
+	private static final boolean DEBUG = false;
 
 	/** Intended display mode */
 	private DisplayMode mode;
@@ -383,7 +385,7 @@ public class SkunkJets
 		slotKeys.put(Keyboard.KEY_SLASH, 10);
 		
 		for(Entry<Integer, Integer> entry: slotKeys.entrySet()) {
-			if(Keyboard.isKeyDown(entry.getKey())) {
+			if(isNewKeyPress(entry.getKey())) {
 				spawnJet(entry.getValue());
 			}
 		}
@@ -405,6 +407,20 @@ public class SkunkJets
 		
 	}
 	
+	private static HashSet<Integer> keysdown = new HashSet<Integer>();
+	
+	private boolean isNewKeyPress(int keycode) {
+		if(!Keyboard.isKeyDown(keycode)) {
+			keysdown.remove(keycode);
+			return false;
+		} else if(keysdown.contains(keycode)) {
+			return false;
+		}
+		
+		keysdown.add(keycode);
+		return true;
+	}
+	
 	private void spawnJet(int slot) {
 		double sspaceLeft = -(float)mode.getWidth() / mode.getHeight();
 		double sspaceWidth = 2.0 * (float)mode.getWidth() / mode.getHeight();
@@ -416,7 +432,7 @@ public class SkunkJets
 		//position = new Vector2f(0, 1);
 		//velocity = new Vector2f(0, 0);
 		
-		System.err.println("spawnJet");
+		if(DEBUG) System.err.println("spawnJet");
 	
 		gameObjects.add(new Jet(position, velocity, false));
 	}
