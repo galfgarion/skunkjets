@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
-public abstract class Projectile extends GameObject
-{
+public abstract class Projectile extends GameObject {
 	private static float maxFiringRate = 1;
 	protected float firingRate;
 	protected int count;
@@ -24,12 +23,11 @@ public abstract class Projectile extends GameObject
 	}
 
 	// max rounds per second
-	public float getFiringRate()
-	{
+	public float getFiringRate() {
 		return firingRate;
 	}
 	
-	public void draw()
+	public void innerDraw()
 	{
 			GL11.glColor3f(1.0f, 1.0f, 1.0f);
 

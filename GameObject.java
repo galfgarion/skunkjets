@@ -40,12 +40,7 @@ public abstract class GameObject {
 
 			float rotationRads = (float) Math.atan2(getVelocity().y, getVelocity().x);
 			GL11.glRotatef((float) (rotationRads * 180 / Math.PI), 0, 0, 1);
-
-			/*
-			 * float distance = 1 - (position.y + 1) / 2; distance =
-			 * (float)Math.sqrt(distance); GL11.glScalef(distance, distance, 1);
-			 */
-			// GL11.glRotatef(angle, 0.0f, 0.0f, 1.0f);
+			
 			this.innerDraw();
 
 		}

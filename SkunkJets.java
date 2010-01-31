@@ -73,6 +73,28 @@ public class SkunkJets {
 
 		while (!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested())
 		{
+			int lastButton = -1;
+
+		    // iterate all events, use the last button down
+		    while(Mouse.next()) {
+		      if(Mouse.getEventButton() != -1 && Mouse.getEventButtonState()) {
+		        lastButton = Mouse.getEventButton();
+		      }
+		    }
+		    
+		    if (lastButton != -1) {
+		    	System.out.println(lastButton);
+		    	
+		    	//if (lastButton == 1) {
+					double time = mainTimer.getTime();
+					if(redCannon.canFire(time)) {
+						GameObject missile = redCannon.fire(time); 
+						//connection.sendNewGameObject(missile);
+						gameObjects.add(missile);
+					}
+		    	//}
+		    }
+			
 			Timer.tick();
 			double now = mainTimer.getTime();
 			double timeDelta = now - lastUpdateTime;
@@ -181,6 +203,7 @@ public class SkunkJets {
 			if(redCannon.canFire(time)) {
 				GameObject missile = redCannon.fire(time); 
 				//connection.sendNewGameObject(missile);
+				System.out.println(missile.getPosition().x + "," + missile.getPosition().y);
 				gameObjects.add(missile);
 			}
 		}
@@ -189,8 +212,7 @@ public class SkunkJets {
 	/**
 	 * Cleans up the test
 	 */
-	private void cleanup()
-	{
+	private void cleanup() {
 		Display.destroy();
 	}
 
@@ -208,8 +230,7 @@ public class SkunkJets {
 		return Display.getDesktopDisplayMode();
 	}
 	
-	private void glInit()
-	{
+	private void glInit() {
 		int width = mode.getWidth();
 		int height = mode.getHeight();
 		float ratio = (float) width / height;
