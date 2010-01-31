@@ -1,20 +1,11 @@
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
-<<<<<<< HEAD:src/Projectile.java
-
-public class Projectile extends GameObject {
+public class Bullet extends GameObject {
 	private static float maxFiringRate = 1;
-	
-
-=======
-//test
-public class Bullet extends GameObject
-{
 	private Vector2f position;
 	private Vector2f velocity;
 	
->>>>>>> e68d4d775d6343989df1da34e5d868792b0c9115:Bullet.java
 	
 	public Bullet(Vector2f position)
 	{
