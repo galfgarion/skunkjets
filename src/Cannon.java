@@ -43,15 +43,11 @@ class Cannon extends GameObject {
 			vertices[i] = new Vector2f();
 			vertices[i].x = (float) Math.cos(i * 2 * Math.PI / numVertices);
 			vertices[i].y = (float) Math.sin(i * 2 * Math.PI / numVertices);
-			System.out.println(i * 360.0f / numVertices);
 		}
 
 		GL11.glBegin(GL11.GL_TRIANGLE_FAN);
 		for (int i = 0; i < numVertices; i++) {
-			float x = vertices[i].x;
-			float y = vertices[i].y;
-			System.out.println("vertexxing at " + x + "," + y);
-			GL11.glVertex2f(x, y);
+			GL11.glVertex2f(vertices[i].x, vertices[i].y);
 		}
 		GL11.glEnd();
 	}

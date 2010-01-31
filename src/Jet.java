@@ -18,6 +18,8 @@ public class Jet extends GameObject {
 	
 	@Override
 	public void draw() {
+		System.out.println("drawing jet");
+		
 		GL11.glPushMatrix();
 		{
 			GL11.glTranslatef(position.x, position.y, 0);

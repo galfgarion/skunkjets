@@ -19,7 +19,7 @@ public class SkunkJets {
 	//JetClient client;
 	
 	Cannon redCannon;
-	Jet jetTemplate;
+	Jet jet;
 	
 	Timer mainTimer = new Timer();
 	List<GameObject> gameObjects = new LinkedList<GameObject>();
@@ -39,8 +39,8 @@ public class SkunkJets {
 	}
 
 	private void switchMode() throws LWJGLException {
-		mode = findDisplayMode(800, 600, Display.getDisplayMode().getBitsPerPixel());
-		Display.setDisplayModeAndFullscreen(mode);
+		mode = findDisplayMode(400, 300, Display.getDisplayMode().getBitsPerPixel());
+		//Display.setDisplayModeAndFullscreen(mode);
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class SkunkJets {
 			glInit();
 
 			gameObjects.add(redCannon = new Cannon(0, -1, 1/20f, 90).setColor(1.0f, 0.0f, 0.0f));
-			gameObjects.add(new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
+			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -118,20 +118,6 @@ public class SkunkJets {
 		for (GameObject gameObject : gameObjects)
 			gameObject.update(timeDelta);
 		
-		/*angle += angleRotation;
-		if (angle > 90.0f) {
-			angle = 0.0f;
-		}
-		quadPosition.x += quadVelocity.x;
-		quadPosition.y += quadVelocity.y;
-		//check colision with vertical border border
-		if (quadPosition.x + 50 >= mode.getWidth() || quadPosition.x - 50 <= 0) {
-			quadVelocity.x *= -1;
-		}
-		//check collision with horizontal border
-		if (quadPosition.y + 50 >= mode.getHeight() || quadPosition.y - 50 <= 0) {
-			quadVelocity.y *= -1;
-		}*/
 	}
 	
 	private void render() {

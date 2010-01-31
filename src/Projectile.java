@@ -3,9 +3,6 @@ import org.lwjgl.util.vector.Vector2f;
 
 
 public class Projectile extends GameObject {
-	
-	Vector2f position, velocity;
-	
 	private static float maxFiringRate = 1;
 	
 
