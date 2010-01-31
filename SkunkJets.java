@@ -1,7 +1,12 @@
-
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
-
+import java.util.Scanner;
+import java.util.Map.Entry;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -12,27 +17,48 @@ import org.lwjgl.util.Timer;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
-public class SkunkJets {
+public class SkunkJets
+{
 	/** Intended display mode */
 	private DisplayMode mode;
-	
-	//JetClient client;
-	
+
+	// JetClient client;
+
 	Cannon redCannon;
 	Jet jet;
-	
-	Timer mainTimer = new Timer();
+
+	public static Timer mainTimer = new Timer();
+	ProjectileType rocket = new RocketProjectile();
+	ProjectileType beam = new BeamProjectile();
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
-	
+
+	private Socket jetSocket;
+	PrintWriter out;
+	Scanner in;
+	private String ip_g;
+	private int port_g;
+	private ReadIn ri;
+
 	/**
 	 * Creates a FullScreenWindowedTest
 	 */
-	public SkunkJets() {
+	public SkunkJets()
+	{
+		this.ip_g = "localhost";
+		this.port_g = 1234;
 	}
+
+	public SkunkJets(int port_g, String ip_g)
+	{
+		this.ip_g = ip_g;
+		this.port_g = port_g;
+	}
+
 	/**
 	 * Executes the test
 	 */
-	public void execute() {
+	public void execute()
+	{
 		initialize();
 		mainLoop();
 		cleanup();
@@ -40,8 +66,9 @@ public class SkunkJets {
 
 	private void switchMode() throws LWJGLException
 	{
-		mode = findDisplayMode(Display.getDisplayMode().getWidth(),
-			Display.getDisplayMode().getHeight(), Display.getDisplayMode().getBitsPerPixel());
+		mode = findDisplayMode(Display.getDisplayMode().getWidth(), Display
+				.getDisplayMode().getHeight(), Display.getDisplayMode()
+				.getBitsPerPixel());
 		Display.setDisplayModeAndFullscreen(mode);
 	}
 
@@ -50,20 +77,20 @@ public class SkunkJets {
 	 */
 	private void initialize()
 	{
-			
+		// connectToServer();
 		try
 		{
-			// find displaymode
 			switchMode();
-			// start of in windowed mode
 			Display.create();
 			glInit();
 
-			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
-			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
 			
+			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
+			redCannon.setCurProjectile(rocket);
+			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 0.1f), true));
+
 			// TODO testing
-			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0,0)));
+			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0f, 0f), false));
 
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
@@ -71,8 +98,33 @@ public class SkunkJets {
 		{
 			e.printStackTrace();
 		}
-		
+
 	}
+
+	private void connectToServer()
+	{
+		try
+		{
+			jetSocket = new Socket(ip_g, port_g);
+			out = new PrintWriter(jetSocket.getOutputStream(), true);
+			in = new Scanner(jetSocket.getInputStream());
+		}
+		catch (UnknownHostException e)
+		{
+			System.err.println("Don't know about host: Jet Socket. So Exiting");
+			System.exit(-1);
+		}
+		catch (IOException e)
+		{
+			System.err
+					.println("Couldn't get I/O for the connection to: Jet Socket. So Exiting");
+			System.exit(-1);
+		}
+		ri = new ReadIn(this);
+		ri.start();
+
+	}
+
 	/**
 	 * Runs the main loop of the "test"
 	 */
@@ -84,48 +136,63 @@ public class SkunkJets {
 		{
 			int lastButton = -1;
 
-		    // iterate all events, use the last button down
-		    while(Mouse.next()) {
-		      if(Mouse.getEventButton() != -1 && Mouse.getEventButtonState()) {
-		        lastButton = Mouse.getEventButton();
-		      }
-		    }
-		    
-		    if (lastButton != -1) {
-		    	System.out.println(lastButton);
-		    	
-		    	//if (lastButton == 1) {
+			// iterate all events, use the last button down
+			while (Mouse.next())
+			{
+				if (Mouse.getEventButton() != -1 && Mouse.getEventButtonState())
+				{
+					lastButton = Mouse.getEventButton();
+				}
+			}
+
+			if (lastButton != -1)
+			{
+				System.out.println(lastButton);
+
+				if (lastButton == 0) {
 					double time = mainTimer.getTime();
-					if(redCannon.canFire(time)) {
-						GameObject missile = redCannon.fire(time); 
-						//connection.sendNewGameObject(missile);
+					if (redCannon.canFire())
+					{
+						GameObject missile = redCannon.fire();
+						// connection.sendNewGameObject(missile);
 						gameObjects.add(missile);
 					}
-		    	//}
-		    }
-			
+				}
+				else if (lastButton == 1)
+				{
+					
+				}
+			}
+
 			Timer.tick();
 			double now = mainTimer.getTime();
 			double timeDelta = now - lastUpdateTime;
 			lastUpdateTime = now;
-			
-			if (Display.isVisible()) {
+
+			if (Display.isVisible())
+			{
 				// check keyboard input
 				processKeyboard();
 				processMouse();
 				// do "game" logic, and render it
 				logic(timeDelta);
 				render();
-			} else {
+			}
+			else
+			{
 				// no need to render/paint if nothing has changed (ie. window
 				// dragged over)
-				if (Display.isDirty()) {
+				if (Display.isDirty())
+				{
 					render();
 				}
 				// don't waste cpu time, sleep more
-				try {
+				try
+				{
 					Thread.sleep(100);
-				} catch (InterruptedException inte) {
+				}
+				catch (InterruptedException inte)
+				{
 
 				}
 			}
@@ -133,107 +200,191 @@ public class SkunkJets {
 			Display.update();
 		}
 	}
-	
-	private void processMouse() {    // iterate all events, use the last button down
+
+	private void processMouse()
+	{ // iterate all events, use the last button
+		// down
 		float x = 2f * Mouse.getX() / mode.getWidth() - 1;
 		float y = 2f * Mouse.getY() / mode.getHeight() - 1;
-		redCannon.setOrientation((float)(Math.atan2(y + 1, x) * 180 / Math.PI));
+		redCannon
+				.setOrientation((float) (Math.atan2(y + 1, x) * 180 / Math.PI));
 	}
-	
-	private void logic(double timeDelta) {
+
+	private void logic(double timeDelta)
+	{
 		for (GameObject gameObject : gameObjects)
 			gameObject.update(timeDelta);
-		
+
 		ArrayList<GameObject> destroyedObjects = new ArrayList<GameObject>();
-		for(int i = 0; i < gameObjects.size(); i++) {
-			for(int j=i + 1; j < gameObjects.size(); j++) {
-				if(gameObjects.get(i) != redCannon && gameObjects.get(j) != redCannon &&
-						gameObjects.get(i).collide(gameObjects.get(j))) {
+		for (int i = 0; i < gameObjects.size(); i++)
+		{
+			for (int j = i + 1; j < gameObjects.size(); j++)
+			{
+				if (gameObjects.get(i) != redCannon
+						&& gameObjects.get(j) != redCannon
+						&& gameObjects.get(i).collide(gameObjects.get(j)))
+				{
 					destroyedObjects.add(gameObjects.get(i));
 					destroyedObjects.add(gameObjects.get(j));
 				}
 			}
 		}
-		
+
 		// explode the objects
-		for(GameObject obj : destroyedObjects) {
+		for (GameObject obj : destroyedObjects)
+		{
 			gameObjects.remove(obj);
 		}
 	}
-	
-	private void render() {
-		//clear background
+
+	private void render()
+	{
+		// clear background
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-		
+
 		GL11.glColor3f(0f, 0f, 0.5f);
 		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glVertex2f(-2/3f, -1f);
-		GL11.glVertex2f(2/3f, -1f);
-		GL11.glVertex2f(2/3f, 1f);
-		GL11.glVertex2f(-2/3f, 1f);
+		GL11.glVertex2f(-2 / 3f, -1f);
+		GL11.glVertex2f(2 / 3f, -1f);
+		GL11.glVertex2f(2 / 3f, 1f);
+		GL11.glVertex2f(-2 / 3f, 1f);
 		GL11.glEnd();
-		
-		for (GameObject gameObject : gameObjects) {
+
+		for (GameObject gameObject : gameObjects)
+		{
 			gameObject.draw();
 		}
 	}
-	
-	private void processKeyboard() {
+
+	private void processKeyboard()
+	{
+		// check for speed changes
+		if (Keyboard.isKeyDown(Keyboard.KEY_W))
+		{
+			jet.speedUp();
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_S))
+		{
+			jet.slowDown();
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_D))
+		{
+			jet.turnRight();
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_A))
+		{
+			jet.turnLeft();
+		}
+
+		// check weapon switch
+		if (Keyboard.isKeyDown(Keyboard.KEY_1))
+		{
+			redCannon.setCurProjectile(rocket);
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_2))
+		{
+			redCannon.setCurProjectile(beam);
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_3))
+		{
+
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_4))
+		{
+
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_5))
+		{
+
+		}
+		
 		//check for fullscreen key
-		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_ADD)) {
 			try {
 				switchMode();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		//check for window key
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			try {
-				mode = new DisplayMode(1440, 900);
-				Display.setDisplayModeAndFullscreen(mode);
-				glInit();
-			} catch (Exception e) {
-				e.printStackTrace();
+
+		
+		HashMap<Integer, Integer> slotKeys = new HashMap<Integer, Integer>();
+		slotKeys.put(Keyboard.KEY_Z, 1);
+		slotKeys.put(Keyboard.KEY_X, 2);
+		slotKeys.put(Keyboard.KEY_C, 3);
+		slotKeys.put(Keyboard.KEY_V, 4);
+		slotKeys.put(Keyboard.KEY_B, 5);
+		slotKeys.put(Keyboard.KEY_N, 6);
+		slotKeys.put(Keyboard.KEY_M, 7);
+		slotKeys.put(Keyboard.KEY_COMMA, 8);
+		slotKeys.put(Keyboard.KEY_PERIOD, 9);
+		slotKeys.put(Keyboard.KEY_SLASH, 10);
+		
+		for(Entry<Integer, Integer> entry: slotKeys.entrySet()) {
+			if(Keyboard.isKeyDown(entry.getKey())) {
+				spawnJet(entry.getValue());
 			}
 		}
-		//check for speed changes
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-			jet.speedUp();
+		/*
+		
+		if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_A);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-			jet.slowDown();
+		if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_S);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-			jet.turnRight();
+		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_D);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-			jet.turnLeft();
-		}
+		*/
+		
 	}
 	
+	private void spawnJet(int slot) {
+		double sspaceLeft = -(float)mode.getWidth() / mode.getHeight();
+		double sspaceWidth = 2.0 * (float)mode.getWidth() / mode.getHeight();
+		double posx = slot * (sspaceWidth / 10f) + sspaceLeft;
+	
+		Vector2f position = new Vector2f((float) posx, 1);
+		Vector2f velocity = new Vector2f(0.0f, -0.2f);
+		
+		//position = new Vector2f(0, 1);
+		//velocity = new Vector2f(0, 0);
+		
+		System.err.println("spawnJet");
+	
+		gameObjects.add(new Jet(position, velocity, false));
+	}
+
 	/**
 	 * Cleans up the test
 	 */
-	private void cleanup() {
+	private void cleanup()
+	{
 		Display.destroy();
 	}
 
-	private DisplayMode findDisplayMode(int width, int height, int bpp) throws LWJGLException
+	private DisplayMode findDisplayMode(int width, int height, int bpp)
+			throws LWJGLException
 	{
 		DisplayMode[] modes = Display.getAvailableDisplayModes();
 		for (int i = 0; i < modes.length; i++)
 		{
 			if (modes[i].getWidth() == width && modes[i].getHeight() == height
-				&& modes[i].getBitsPerPixel() >= bpp && modes[i].getFrequency() <= 60)
+					&& modes[i].getBitsPerPixel() >= bpp
+					&& modes[i].getFrequency() <= 60)
 			{
 				return modes[i];
 			}
 		}
 		return Display.getDesktopDisplayMode();
 	}
-	
-	private void glInit() {
+
+	private void glInit()
+	{
 		int width = mode.getWidth();
 		int height = mode.getHeight();
 		float ratio = (float) width / height;
@@ -245,18 +396,42 @@ public class SkunkJets {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		GL11.glViewport(0, 0, mode.getWidth(), mode.getHeight());
-		//set clear color to black
+		// set clear color to black
 		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		//sync frame (only works on windows)
+		// sync frame (only works on windows)
 		Display.setVSyncEnabled(true);
 	}
+
 	/**
 	 * Test entry point
 	 */
-	public static void main(String[] args) {
-		SkunkJets fswTest = new SkunkJets();
+	public static void main(String[] args)
+	{
+		SkunkJets fswTest = (args.length == 2) ? new SkunkJets(Integer
+				.valueOf(args[0]), args[1]) : new SkunkJets();
 		fswTest.execute();
 		System.exit(0);
 	}
 
+}
+
+class ReadIn extends Thread
+{
+	SkunkJets jc;
+
+	public ReadIn(SkunkJets jc)
+	{
+		this.jc = jc;
+	}
+
+	public void run()
+	{
+		while (true)
+		{
+			if (jc.in.hasNextLine())
+			{
+				System.out.println(jc.in.nextLine());
+			}
+		}
+	}
 }

@@ -1,19 +1,25 @@
-import java.util.Vector;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 public class Jet extends GameObject {
 	
-	public Jet(Vector2f position, Vector2f velocity) {
-		super(position, velocity);
-	}
+	int img;
+	boolean myTeam;
+
+	public static float speed = 0.2f;
 	
-	@Override
-	public void update(double timeDelta) {
-		Vector2f moveDelta = new Vector2f(getVelocity());
-		moveDelta.scale((float)timeDelta);
-		Vector2f.add(getPosition(), moveDelta, getPosition());
+	public Jet(Vector2f position, Vector2f velocity, boolean myTeam) {
+		super(position, velocity);
+		this.myTeam = myTeam;
+		if (myTeam)
+		{
+			img = ImageLib.getImage("Images/Jet blue.png");
+		}
+		else
+		{
+			img = ImageLib.getImage("Images/Jet red.png");
+		}
 	}
 	
 	public void speedUp() {
@@ -52,17 +58,7 @@ public class Jet extends GameObject {
 	
 	@Override
 	public void innerDraw() {
-		GL11.glColor3f(1.0f, 1.0f, 1.0f);
-		
-		GL11.glBegin(GL11.GL_QUADS);
-		{
-			GL11.glVertex2d(-0.05, -0.05);
-			GL11.glVertex2d(0.05, -0.05);
-			GL11.glVertex2d(0.05, 0.05);
-			GL11.glVertex2d(-0.05, 0.05);
-			//System.err.println("at pixel " + (-50 + position.x) + "," + (-50 + position.y));
-		}
-		GL11.glEnd();
+		ImageLib.drawImage(img, 0, 0, -90);
 	}
 
 }

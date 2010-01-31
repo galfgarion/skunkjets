@@ -5,7 +5,7 @@ public class RocketProjectile extends ProjectileType
 	{
 		firingRate = 2.5f;
 		speed = 0.5f;
-		img = ImageLib.getImage("Images/missile.png");
+		img = ImageLib.getImage("Images/turret's missile.png");
 		maxBullets = 10;
 	}
 }
