@@ -8,9 +8,11 @@ public class Explosion extends GameObject
    float delay;
    float lifeSpan = 0.4f;
    int index = 0;
+
    
    public Explosion(Vector2f position) {
       super(position, new Vector2f(0, 0), true); // Explosions always visible
+      visibilityRadius = 0.2;
       if (img == null)
       {
          img = new int[8];
@@ -31,6 +33,7 @@ public class Explosion extends GameObject
       ImageLib.drawImage(curImg, 0.0f, 0.0f, 0.0f);
       // TODO Auto-generated method stub
    }
+   
    
    @Override
    public boolean update(double timeDelta) {

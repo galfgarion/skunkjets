@@ -12,7 +12,7 @@ public abstract class GameObject {
 	public int sprite;
 	
 	protected double radius; // for bounding sphere collision
-	protected double visibilityRadius; // for shroud testing
+	public double visibilityRadius; // for shroud testing
 	protected boolean visible; // whether or not the object should be seen
 	protected boolean myTeam;
 	

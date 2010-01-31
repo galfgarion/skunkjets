@@ -22,7 +22,10 @@ public class SkunkJets
 {
 	private static final int MAX_JETS = 5;
 	private static final int TIME_BETWEEN_JET_SPAWN = 5;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
+	private static final int START_STATE = 1;
+	private static final int GAME_STATE = 2;
+	private static final int END_STATE = 3;
 
 	/** Intended display mode */
 	private DisplayMode mode;
@@ -41,7 +44,7 @@ public class SkunkJets
 	
 	Cannon redCannon;
 
-	public static Timer mainTimer = new Timer();
+	public static Timer mainTimer;
 	ProjectileType rocket = new RocketProjectile(true); //TODO construct with team variable (not hardcoded true)
 	ProjectileType beam = new BeamProjectile(true); //TODO construct with team variable (not hardcoded true)
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
@@ -52,15 +55,19 @@ public class SkunkJets
 	int curJet = 0;
 	
 	private HealthBar healthBar = new HealthBar();
+	private int state;
 	
 	int background = ImageLib.getImage("Images/background.jpg");
-
+	int title = ImageLib.getImage("Images/titleScreen.jpg");
+	
 	private Socket jetSocket;
 	PrintWriter out;
 	Scanner in;
 	private String ip_g;
 	private int port_g;
 	private ReadIn ri;
+	private double enemySpawnTime = 0.0;
+	private double timeUntilNextEnemy = 5.0;
 
 	private static float lastJetSpawnTime = 0;
 	
@@ -120,7 +127,7 @@ public class SkunkJets
 			switchMode();
 			Display.create();
 			glInit();
-
+			state = START_STATE;
 			// TODO cannon should be constructed based on myTeam? variable 
 			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90, true).setColor(1.0f, 0.0f, 0.0f));
 			redCannon.setCurProjectile(rocket);
@@ -167,59 +174,78 @@ public class SkunkJets
 	 */
 	private void mainLoop()
 	{
-		double lastUpdateTime = mainTimer.getTime();
+		double timeDelta = 0;
+		double lastUpdateTime;// = mainTimer.getTime();
 
 		while (!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested())
 		{
-			int lastButton = -1;
-
-			// iterate all events, use the last button down
-			while (Mouse.next())
-			{
-				if (Mouse.getEventButton() != -1 && Mouse.getEventButtonState())
-				{
-					lastButton = Mouse.getEventButton();
+			if (state == START_STATE)
+			{			
+				if(Keyboard.isKeyDown(Keyboard.KEY_RETURN)){
+					state=GAME_STATE;
+					mainTimer = new Timer();
+					
 				}
 			}
-
-			if (lastButton != -1)
+			else if (state == GAME_STATE)
 			{
-				System.out.println(lastButton);
-
-				if (lastButton == 0) {
-					double time = mainTimer.getTime();
-					if (redCannon.canFire())
+				lastUpdateTime = mainTimer.getTime();
+				int lastButton = -1;
+	
+				// iterate all events, use the last button down
+				while (Mouse.next())
+				{
+					if (Mouse.getEventButton() != -1 && Mouse.getEventButtonState())
 					{
-						GameObject missile = redCannon.fire();
-						// connection.sendNewGameObject(missile);
-						gameObjects.add(missile);
+						lastButton = Mouse.getEventButton();
 					}
 				}
-				else if (lastButton == 1)
+	
+				if (lastButton != -1)
 				{
-					if(canSpawnJet()) {
-						Jet newJet = new Jet(new Vector2f(p2w_x(Mouse.getX()), -1.0f), new Vector2f(0, 0.2f), true);
-						jet = newJet;
-						curJet = jets.size() - 1;
-						jets.add(newJet);
-						gameObjects.add(newJet);
-						lastJetSpawnTime = mainTimer.getTime();
+					System.out.println(lastButton);
+	
+					if (lastButton == 0) {
+						double time = mainTimer.getTime();
+						if (redCannon.canFire())
+						{
+							GameObject missile = redCannon.fire();
+							// connection.sendNewGameObject(missile);
+							gameObjects.add(missile);
+						}
+					}
+					else if (lastButton == 1)
+					{
+						if(canSpawnJet()) {
+							Jet newJet = new Jet(new Vector2f(p2w_x(Mouse.getX()), -1.0f), new Vector2f(0, 0.2f), true);
+							jet = newJet;
+							curJet = jets.size() - 1;
+							jets.add(newJet);
+							gameObjects.add(newJet);
+							lastJetSpawnTime = mainTimer.getTime();
+						}
 					}
 				}
+	
+				Timer.tick();
+				double now = mainTimer.getTime();
+				timeDelta = now - lastUpdateTime;
+				lastUpdateTime = now;
 			}
-
-			Timer.tick();
-			double now = mainTimer.getTime();
-			double timeDelta = now - lastUpdateTime;
-			lastUpdateTime = now;
-
+			else if (state == END_STATE)
+			{
+				
+			}
 			if (Display.isVisible())
 			{
-				// check keyboard input
-				processKeyboard();
-				processMouse();
-				// do "game" logic, and render it
-				logic(timeDelta);
+				if (state == GAME_STATE)
+				{
+					// check keyboard input
+					processKeyboard();
+					processMouse();
+					// do "game" logic, and render it
+					logic(timeDelta);
+				}
 				render();
 			}
 			else
@@ -241,7 +267,7 @@ public class SkunkJets
 				}
 			}
 			// Update window
-			Display.update();
+			Display.update();			
 		}
 	}
 
@@ -264,6 +290,16 @@ public class SkunkJets
 	private void logic(double timeDelta) {
 	   ArrayList<GameObject> destroyedObjects = new ArrayList<GameObject>();
 	   ArrayList<Explosion> destroyedExplosions = new ArrayList<Explosion>();
+	   
+	   enemySpawnTime += timeDelta;
+	   if (enemySpawnTime > timeUntilNextEnemy)
+	   {
+			spawnJet((Math.random()*(upperXBound - lowerXBound) + lowerXBound));
+			enemySpawnTime = 0.0;
+			timeUntilNextEnemy -= 0.1;
+	   }
+	   
+	   
 		for (GameObject gameObject : gameObjects)
 		{
 			if (gameObject.update(timeDelta)) 
@@ -286,7 +322,11 @@ public class SkunkJets
             System.err.println("Jet reached base at " + gameObject.getPosition().y);
             explosions.add(new Explosion(gameObject.getPosition()));
             destroyedObjects.add(gameObject);
-            healthBar.decrease();
+            if (healthBar.decrease() == 0)
+            {
+            	mainTimer.pause();
+            	state = END_STATE;
+            }
          }
 		}
 		
@@ -342,22 +382,54 @@ public class SkunkJets
 		GL11.glVertex2f(lowerXBound, upperYBound);
 		GL11.glEnd();
 		
-		ImageLib.drawImage(background, 0, 0, 0.0f, 550, 1000);
-
-		for (GameObject gameObject : gameObjects)
+		if (state == START_STATE)
 		{
-			if (DEBUG || gameObject.visible) gameObject.draw(this);
-			for (GameObject go : gameObjects)
+			ImageLib.drawImage(title, 0, 0, (float) 0.0, mode.getWidth(), mode.getHeight());
+		}
+		else if (state == GAME_STATE)
+		{
+			ImageLib.drawImage(background, 0, 0, 0.0f, 550, 1000);
+
+			for (GameObject gameObject : gameObjects)
 			{
-			   if (!go.myTeam && !gameObject.equals(go) && 
-			      gameObject.myTeam && gameObject.isVisible(go)) go.draw(this);
+				if (DEBUG || gameObject.visible) gameObject.draw(this);
+				for (GameObject go : gameObjects)
+				{
+				   if ((!go.myTeam && !gameObject.equals(go) && 
+				      gameObject.myTeam && gameObject.isVisible(go))||nearExplosion(go)) go.draw(this);
+				}
+			}
+			
+			for (Explosion obj : explosions)
+			   obj.draw(this);
+			
+			healthBar.draw();
+		}
+		else if (state == END_STATE)
+		{
+			
+		}
+	}
+
+	private boolean nearExplosion(GameObject go) {
+		if (!go.myTeam)
+		{
+			for (Explosion expl : explosions)
+			{
+				Vector2f distvec = new Vector2f();
+				
+				Vector2f.sub(go.getPosition(), expl.getPosition(), distvec);
+				double dist = distvec.length();
+							
+				boolean collision = dist < expl.visibilityRadius + go.visibilityRadius;
+				
+				if (collision)
+				{
+					return collision;
+				}							
 			}
 		}
-		
-		for (Explosion obj : explosions)
-		   obj.draw(this);
-		
-		healthBar.draw();
+		return false;
 	}
 
 	private void processKeyboard()
@@ -469,9 +541,11 @@ public class SkunkJets
 		
 		for(Entry<Integer, Integer> entry: slotKeys.entrySet()) {
 			if(isNewKeyPress(entry.getKey())) {
-				spawnJet(entry.getValue());
+				if (DEBUG)
+					spawnJet(entry.getValue());
 			}
 		}
+
 		/*
 		
 		if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
@@ -504,10 +578,11 @@ public class SkunkJets
 		return true;
 	}
 	
-	private void spawnJet(int slot) {
+	// Spawns an enemy
+	private void spawnJet(double slot) {
 		double sspaceLeft = -(float)mode.getWidth() / mode.getHeight();
 		double sspaceWidth = 2.0 * (float)mode.getWidth() / mode.getHeight();
-		double posx = slot * (sspaceWidth / 10f) + sspaceLeft;
+		double posx = slot;//slot * (sspaceWidth / 10f) + sspaceLeft;
 	
 		Vector2f position = new Vector2f((float) posx, 1);
 		Vector2f velocity = new Vector2f(0.0f, -0.2f);

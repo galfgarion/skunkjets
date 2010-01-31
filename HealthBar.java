@@ -36,9 +36,12 @@ public class HealthBar {
 	public int decrease() {
 		if(hearts.size() > 0) {
 			hearts.remove(hearts.size() - 1);
+			return hearts.size();
+		}else{
+			return -1;
 		}
 		
-		return hearts.size();
+		
 	}
 
 }
