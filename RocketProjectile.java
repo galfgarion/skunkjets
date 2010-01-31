@@ -8,7 +8,9 @@ public class RocketProjectile extends Projectile
 	{
 		super(position, velocity);
 		firingRate = 0.5f;
-		//img = ;
+		speed = 0.5f;
+		img = ImageLib.getImage("Images/missile.png");
+		maxBullets = 10;
 	}
 
 }

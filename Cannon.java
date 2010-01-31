@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -6,23 +9,24 @@ class Cannon extends GameObject
 	static final float DEG_TO_RAD = (float) Math.PI / 180.0f;
 
 	private float orientation;
-	private float centerX, centerY, radius;
+	private Vector2f center;
+	private float radius;
 	private float red, green, blue;
-	private float projectileSpeed = 0.5f;
 
 	private double lastFireTime = 0;
 
 	private Projectile curProjectile = new RocketProjectile(null, null);
+	ArrayList<Bullet> bullets;
 
 	public Cannon(float centerX, float centerY, float radius, float orientation)
 	{
-		this.centerX = centerX;
-		this.centerY = centerY;
+		this.center = new Vector2f(centerX, centerY);
 		this.radius = radius;
 		this.orientation = orientation; // degrees, 90.0 is pointed up positive y axis
 		this.red = 1.0f;
 		this.green = 0.0f;
 		this.blue = 1.0f;
+		bullets = new ArrayList<Bullet>();
 	}
 
 	public Cannon setColor(float red, float green, float blue)
@@ -49,18 +53,20 @@ class Cannon extends GameObject
 
 	public boolean canFire(double time)
 	{
-		return ((time - lastFireTime) >= (1.0f / curProjectile.getFiringRate()));
+		return ((time - lastFireTime) >= (1.0f / curProjectile.getFiringRate()))
+			&& (curProjectile.count < curProjectile.maxBullets);
 	}
 
-	public Projectile fire(double time)
+	public Bullet fire(double time)
 	{
 		lastFireTime = time;
-		float velX = (float) (projectileSpeed * Math.cos(orientation * DEG_TO_RAD));
-		float velY = (float) (projectileSpeed * Math.sin(orientation * DEG_TO_RAD));
+		float velX = (float) (curProjectile.getSpeed() * Math.cos(orientation * DEG_TO_RAD));
+		float velY = (float) (curProjectile.getSpeed() * Math.sin(orientation * DEG_TO_RAD));
 
 		Vector2f velocity = new Vector2f(velX, velY);
-		Projectile bullet = new RocketProjectile(new Vector2f(centerX, centerY), velocity);
-
+		//TODO fix start of bullet
+		Bullet bullet = curProjectile.fire(new Vector2f(center), velocity);
+		bullets.add(bullet);
 		return bullet;
 	}
 
@@ -92,7 +98,7 @@ class Cannon extends GameObject
 	public void draw()
 	{
 		GL11.glPushMatrix();
-		GL11.glTranslated(centerX, centerY, 0);
+		GL11.glTranslated(center.x, center.y, 0);
 		GL11.glScalef(radius, radius, 1);
 
 		GL11.glColor3f(red, green, blue);

@@ -101,11 +101,13 @@ public class SkunkJets
 			gameObjects.add(redCannon = new Cannon(0, -1, 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
 			gameObjects.add(new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
 
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+		
 	}
 
 	/**
