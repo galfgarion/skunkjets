@@ -12,6 +12,7 @@ public class Jet extends GameObject {
 	public Jet(Vector2f position, Vector2f velocity, boolean myTeam) {
 		super(position, velocity);
 		this.myTeam = myTeam;
+		radius = 0.05;
 		if (myTeam)
 		{
 			img = ImageLib.getImage("Images/Jet blue.png");
