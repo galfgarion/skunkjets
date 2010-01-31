@@ -26,6 +26,7 @@ class Cannon extends GameObject
 		this.red = 1.0f;
 		this.green = 0.0f;
 		this.blue = 1.0f;
+		visibilityRadius = .3f;
 		bullets = new ArrayList<Bullet>();
 		if (myTeam)
 		{

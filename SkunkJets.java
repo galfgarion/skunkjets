@@ -22,7 +22,7 @@ public class SkunkJets
 {
 	private static final int MAX_JETS = 5;
 	private static final int TIME_BETWEEN_JET_SPAWN = 5;
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	/** Intended display mode */
 	private DisplayMode mode;
@@ -32,7 +32,7 @@ public class SkunkJets
 	public float lowerYBound = -1f;
 	public float upperYBound = 1f;
 	
-	private float MIN_BASE_DISTANCE = 0.8f;
+	private float MIN_BASE_DISTANCE = 0.9f;
 	
 	private boolean EDown = false;
 	private boolean QDown = false;
@@ -89,8 +89,6 @@ public class SkunkJets
 	{
 		return (float) (((2 * y) + 1.0 - Display.getDisplayMode().getHeight()) / Display.getDisplayMode().getHeight());
 	}
-
-	
 	
 	/**
 	 * Executes the test
@@ -101,14 +99,14 @@ public class SkunkJets
 		mainLoop();
 		cleanup();
 	}
+	
+	
 
 	private void switchMode() throws LWJGLException
 	{
 		mode = findDisplayMode(Display.getDisplayMode().getWidth(),
 			Display.getDisplayMode().getHeight(), Display.getDisplayMode().getBitsPerPixel());
 		Display.setDisplayModeAndFullscreen(mode);
-		//Display.setDisplayMode(mode);
-		//Display.setFullscreen(true);
 	}
 
 	/**
@@ -256,8 +254,10 @@ public class SkunkJets
 	private void processMouse()
 	{ // iterate all events, use the last button
 		// down
-		float x = 2f * Mouse.getX() / mode.getWidth() - 1;
-		float y = 2f * Mouse.getY() / mode.getHeight() - 1;
+		/*float x = 2f * Mouse.getX() / mode.getWidth() - 1;
+		float y = 2f * Mouse.getY() / mode.getHeight() - 1;*/
+	   float x = p2w_x(Mouse.getX());
+      float y = p2w_y(Mouse.getY());
 		redCannon.setOrientation((float) (Math.atan2(y + 1, x) * 180 / Math.PI));
 	}
 	

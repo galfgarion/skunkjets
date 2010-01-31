@@ -5,6 +5,7 @@ public abstract class ProjectileType
 {
 	protected float firingRate;
 	protected float speed;
+	protected float radius;
 	
 	protected int img;
 	protected boolean myTeam;
@@ -30,7 +31,7 @@ public abstract class ProjectileType
 
 	public Bullet fire(Vector2f position, Vector2f velocity)
 	{
-		Bullet bullet = new Bullet(position, img, this.myTeam);
+		Bullet bullet = new Bullet(position, radius, img, this.myTeam);
 		bullet.fire(velocity);
 		return bullet;
 	}
