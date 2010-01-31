@@ -1,4 +1,3 @@
-import java.util.Vector;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -7,6 +6,8 @@ public class Jet extends GameObject {
 	
 	int img;
 	boolean myTeam;
+
+	public static float speed = 0.2f;
 	
 	public Jet(Vector2f position, Vector2f velocity, boolean myTeam) {
 		super(position, velocity);

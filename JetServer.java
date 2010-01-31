@@ -4,7 +4,7 @@ import java.io.*;
 
 public class JetServer {
 
-	ArrayList<JetServerThread> people = new ArrayList<JetServerThread>();
+	ArrayList<JetClientToServerThread> people = new ArrayList<JetClientToServerThread>();
 	ServerSocket serverSocket = null;
 	int port;
 
@@ -20,8 +20,7 @@ public class JetServer {
 			InetAddress addr = InetAddress.getLocalHost();
 
 			// Get IP Address
-			System.out.println("IP:" + addr.getHostAddress() + " Port:"
-					+ port);
+			System.out.println("IP:" + addr.getHostAddress() + " Port:" + port);
 
 		} catch (IOException e) {
 			System.err.println("Could not listen on port: " + port);
@@ -29,8 +28,8 @@ public class JetServer {
 		}
 
 		while (listening) {
-			JetServerThread temp = new JetServerThread(this, serverSocket
-					.accept());
+			JetClientToServerThread temp = new JetClientToServerThread(this,
+					serverSocket.accept());
 			people.add(temp);
 			temp.start();
 		}
@@ -58,11 +57,11 @@ public class JetServer {
 	}
 }
 
-class JetServerThread extends Thread {
+class JetClientToServerThread extends Thread {
 	private JetServer js;
 	private Socket socket = null;
 
-	public JetServerThread(JetServer js, Socket socket) {
+	public JetClientToServerThread(JetServer js, Socket socket) {
 		super("JetServerThread");
 		this.socket = socket;
 		this.js = js;
@@ -85,6 +84,34 @@ class JetServerThread extends Thread {
 			socket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void sendInfo() {
+		// TODO Auto-generated method stub
+		
+	}
+}
+
+class JetServerToClientsThread extends Thread {
+	private JetServer js;
+	private Socket socket = null;
+
+	public JetServerToClientsThread(JetServer js, Socket socket) {
+		super("JetServerThread");
+		this.socket = socket;
+		this.js = js;
+	}
+
+	public void run() {
+		boolean going = true;
+        
+		while(going){
+			for(int i=0; i < js.people.size(); i++){
+				JetClientToServerThread person = js.people.get(i);
+				person.sendInfo();
+				
+			}
 		}
 	}
 }

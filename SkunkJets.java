@@ -3,9 +3,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
-
+import java.util.Map.Entry;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -296,6 +297,66 @@ public class SkunkJets
 		{
 
 		}
+		
+		//check for fullscreen key
+		if (Keyboard.isKeyDown(Keyboard.KEY_ADD)) {
+			try {
+				switchMode();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		
+		HashMap<Integer, Integer> slotKeys = new HashMap<Integer, Integer>();
+		slotKeys.put(Keyboard.KEY_Z, 1);
+		slotKeys.put(Keyboard.KEY_X, 2);
+		slotKeys.put(Keyboard.KEY_C, 3);
+		slotKeys.put(Keyboard.KEY_V, 4);
+		slotKeys.put(Keyboard.KEY_B, 5);
+		slotKeys.put(Keyboard.KEY_N, 6);
+		slotKeys.put(Keyboard.KEY_M, 7);
+		slotKeys.put(Keyboard.KEY_COMMA, 8);
+		slotKeys.put(Keyboard.KEY_PERIOD, 9);
+		slotKeys.put(Keyboard.KEY_SLASH, 10);
+		
+		for(Entry<Integer, Integer> entry: slotKeys.entrySet()) {
+			if(Keyboard.isKeyDown(entry.getKey())) {
+				spawnJet(entry.getValue());
+			}
+		}
+		/*
+		
+		if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_A);
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_S);
+		}
+		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_D);
+		}
+		*/
+		
+	}
+	
+	private void spawnJet(int slot) {
+		double sspaceLeft = -(float)mode.getWidth() / mode.getHeight();
+		double sspaceWidth = 2.0 * (float)mode.getWidth() / mode.getHeight();
+		double posx = slot * (sspaceWidth / 10f) + sspaceLeft;
+	
+		Vector2f position = new Vector2f((float) posx, 1);
+		Vector2f velocity = new Vector2f(0.0f, -0.2f);
+		
+		//position = new Vector2f(0, 1);
+		//velocity = new Vector2f(0, 0);
+		
+		System.err.println("spawnJet");
+	
+		gameObjects.add(new Jet(position, velocity, false));
 	}
 
 	/**
