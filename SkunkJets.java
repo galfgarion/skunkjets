@@ -20,7 +20,7 @@ public class SkunkJets {
 	Cannon redCannon;
 	Jet jet;
 	
-	Timer mainTimer = new Timer();
+	public static Timer mainTimer = new Timer();
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
 	
 	/**
@@ -91,8 +91,8 @@ public class SkunkJets {
 		    	
 		    	//if (lastButton == 1) {
 					double time = mainTimer.getTime();
-					if(redCannon.canFire(time)) {
-						GameObject missile = redCannon.fire(time); 
+					if(redCannon.canFire()) {
+						GameObject missile = redCannon.fire(); 
 						//connection.sendNewGameObject(missile);
 						gameObjects.add(missile);
 					}

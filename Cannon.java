@@ -35,8 +35,8 @@ class Cannon extends GameObject
 	}
 
 	@Override
-	public void update(SkunkJets.FrameData frameData) {
-		super.update(frameData);
+	public void update(double timeDelta) {
+		super.update(timeDelta);
 	}
 
 	public double getOrientation()

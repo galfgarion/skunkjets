@@ -1,5 +1,3 @@
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 public class Bullet extends GameObject
@@ -16,9 +14,8 @@ public class Bullet extends GameObject
 		this.setVelocity(velocity);
 	}
 
-	public void innerDraw()
-	{
-		ImageLib.drawImage(img, 0f, 0f, 90f);
+	public void innerDraw() {
+		ImageLib.drawImage(img, 0f, 0f, -90f);
 	}
 
 	public void update(double timeDelta)

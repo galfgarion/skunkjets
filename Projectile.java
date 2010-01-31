@@ -4,11 +4,6 @@ import java.util.ArrayList;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
-import java.util.ArrayList;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector2f;
-
 public abstract class Projectile extends GameObject {
 	private static float maxFiringRate = 1;
 	protected float firingRate;
