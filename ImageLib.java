@@ -46,7 +46,7 @@ public class ImageLib {
       return 0;
    }
    
-   // BEWARE: Be sure w and h are the correct values for the coordinate system
+   // BEWARE: Width and Height are assumed to be pixel values
    public static int drawImage(int imgVal, float x, float y, float angle, int w, int h)
    {
       Integer imgKey = new Integer(imgVal);
@@ -54,7 +54,9 @@ public class ImageLib {
       if (!Images.containsKey(imgKey)) return -1;
       
       img = (GLImage) Images.get(imgKey);
-      drawImage(img, x, y, w, h, angle);
+      float width = ((float)w) * 2 / Display.getDisplayMode().getHeight();
+      float height = ((float)h * 2 / Display.getDisplayMode().getHeight());
+      drawImage(img, x, y, width, height, angle);
       return 0;
    }
    
@@ -76,7 +78,8 @@ public class ImageLib {
       // preserve settings
       //pushAttribOrtho();
       GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_TEXTURE_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_LIGHTING_BIT);
-      // set color to white
+      
+      // these 3 lines enable the transparency
       GL11.glEnable(GL11.GL_BLEND);
       GL11.glColor4f(1f,1f,1f,1f);   // don't force color to white (may want to tint image)
       GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -102,6 +105,7 @@ public class ImageLib {
            GL11.glEnd();
         }
         GL11.glPopMatrix();
+        // disable blend so it doesn't affect other things
         GL11.glDisable(GL11.GL_BLEND);
         // return to previous settings
         //popAttrib();
