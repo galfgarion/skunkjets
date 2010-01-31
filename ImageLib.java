@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11;
 
 public class ImageLib {
    
-   // Image library
    public static final int SIZE_FLOAT = 4;
    public static final int SIZE_INT = 4;
    static Hashtable OpenGLextensions;
@@ -18,9 +17,14 @@ public class ImageLib {
    static Hashtable<String,Integer> ImageStrings = new Hashtable<String,Integer>();
    static int keyValCurrent;
    
+   public ImageLib() 
+   {
+      Images = new Hashtable<Integer,GLImage>();
+   }
+   
    // This class is to present a small level of abstraction between the
    // game management code and the display of each 2D sprite
-   public static int getImage(String filename)
+   public int getImage(String filename)
    {
       GLImage img;
       
@@ -33,7 +37,7 @@ public class ImageLib {
       return keyValCurrent - 1;
    }
    
-   public static int drawImage(int imgVal, int x, int y, float angle)
+   public int drawImage(int imgVal, int x, int y, float angle)
    {
       Integer imgKey = new Integer(imgVal);
       GLImage img;
@@ -44,7 +48,7 @@ public class ImageLib {
       return 0;
    }
    
-   public static int drawImage(int imgVal, int x, int y, float angle, int w, int h)
+   public int drawImage(int imgVal, int x, int y, float angle, int w, int h)
    {
       Integer imgKey = new Integer(imgVal);
       GLImage img;

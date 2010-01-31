@@ -1,3 +1,9 @@
+
+import java.util.ArrayList;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector2f;
+
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
@@ -5,6 +11,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 public abstract class Projectile extends GameObject
 {
+	private static float maxFiringRate = 1;
 	protected Vector2f position;
 	protected Vector2f velocity;
 	protected float firingRate;
@@ -51,19 +58,24 @@ public abstract class Projectile extends GameObject
 				GL11.glVertex2d(0.05, -0.05);
 				GL11.glVertex2d(0.05, 0.05);
 				GL11.glVertex2d(-0.05, 0.05);
-				// System.err.println("at pixel " + (-50 + position.x) + "," +
-				// (-50 + position.y));
 			}
 			GL11.glEnd();
 		}
 		GL11.glPopMatrix();
+		
 	}
 
-	public void update(double timeDelta)
-	{
+	@Override
+	public void update(double timeDelta) {
 		// TODO Auto-generated method stub
 		Vector2f moveDelta = new Vector2f(velocity);
-		moveDelta.scale((float) timeDelta);
-		Vector2f.add(position, moveDelta, position);
+		moveDelta.scale((float)timeDelta);
+		Vector2f.add(position, moveDelta, position);	
+	}
+	
+	
+	// max rounds per second
+	public float maxFiringRate() {
+		return maxFiringRate;
 	}
 }

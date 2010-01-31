@@ -1,5 +1,6 @@
 
 import java.util.LinkedList;
+import java.util.List;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -21,7 +22,7 @@ public class SkunkJets {
 	Jet jet;
 	
 	Timer mainTimer = new Timer();
-	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
+	List<GameObject> gameObjects = new LinkedList<GameObject>();
 	
 	/**
 	 * Creates a FullScreenWindowedTest
@@ -37,21 +38,19 @@ public class SkunkJets {
 		cleanup();
 	}
 
-	private void switchMode() throws LWJGLException
-	{
-		mode = findDisplayMode(Display.getDisplayMode().getWidth(),
-			Display.getDisplayMode().getHeight(), Display.getDisplayMode().getBitsPerPixel());
-		Display.setDisplayModeAndFullscreen(mode);
+	private void switchMode() throws LWJGLException {
+		mode = findDisplayMode(400, 300, Display.getDisplayMode().getBitsPerPixel());
+		//Display.setDisplayModeAndFullscreen(mode);
 	}
 
 	/**
 	 * Initializes the test
 	 */
-	private void initialize()
-	{
-		try
-		{
-			// find displaymode
+	private void initialize() {
+		try {
+			//client = new JetClient();
+			
+			//find displaymode
 			switchMode();
 			// start of in windowed mode
 			Display.create();
@@ -67,12 +66,10 @@ public class SkunkJets {
 	/**
 	 * Runs the main loop of the "test"
 	 */
-	private void mainLoop()
-	{
+	private void mainLoop() {
 		double lastUpdateTime = mainTimer.getTime();
-
-		while (!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested())
-		{
+		
+		while (!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
 			Timer.tick();
 			double now = mainTimer.getTime();
 			double timeDelta = now - lastUpdateTime;
@@ -95,7 +92,6 @@ public class SkunkJets {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException inte) {
-
 				}
 			}
 			// Update window
@@ -106,12 +102,22 @@ public class SkunkJets {
 	private void processMouse() {    // iterate all events, use the last button down
 		float x = 2f * Mouse.getX() / mode.getWidth() - 1;
 		float y = 2f * Mouse.getY() / mode.getHeight() - 1;
-		redCannon.setOrientation((float)(Math.atan2(y + 1, x) * 180 / Math.PI));
+		float dx = x;
+		float dy = y + 1;
+		float deg = 90;
+		if (dx != 0) {
+			deg = (float)Math.toDegrees(Math.atan(dy / dx));
+			if (deg < 0)
+				deg += 180;
+		}
+		redCannon.orientation = deg;
+		
 	}
 	
 	private void logic(double timeDelta) {
 		for (GameObject gameObject : gameObjects)
 			gameObject.update(timeDelta);
+		
 	}
 	
 	private void render() {
@@ -153,22 +159,16 @@ public class SkunkJets {
 		//check for speed changes
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
 			//quadVelocity.y += 0.1f;
-			jet.speedUp();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
 			//quadVelocity.y -= 0.1f;
-			jet.slowDown();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
 			//redCannon.turnRight(1f);
-			//jet.position.x -= 1/20f;
-			jet.turnRight();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
 			//redCannon.turnLeft(1f);
 			//quadVelocity.x -= 0.1f;
-			//jet.position.x += 1/20f;
-			jet.turnLeft();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_ADD)) {
 			//angleRotation += 0.1f;
@@ -185,35 +185,41 @@ public class SkunkJets {
 			}
 		}
 	}
-	
 	/**
 	 * Cleans up the test
 	 */
-	private void cleanup()
-	{
+	private void cleanup() {
 		Display.destroy();
 	}
 
-	private DisplayMode findDisplayMode(int width, int height, int bpp) throws LWJGLException
-	{
+	/**
+	 * Retrieves a displaymode, if one such is available
+	 * 
+	 * @param width
+	 *            Required width
+	 * @param height
+	 *            Required height
+	 * @param bpp
+	 *            Minimum required bits per pixel
+	 * @return
+	 */
+	private DisplayMode findDisplayMode(int width, int height, int bpp) throws LWJGLException {
 		DisplayMode[] modes = Display.getAvailableDisplayModes();
-		for (int i = 0; i < modes.length; i++)
-		{
-			if (modes[i].getWidth() == width && modes[i].getHeight() == height
-				&& modes[i].getBitsPerPixel() >= bpp && modes[i].getFrequency() <= 60)
-			{
+		for (int i = 0; i < modes.length; i++) {
+			if (modes[i].getWidth() == width && modes[i].getHeight() == height && modes[i].getBitsPerPixel() >= bpp && modes[i].getFrequency() <= 60) {
 				return modes[i];
 			}
 		}
 		return Display.getDesktopDisplayMode();
 	}
-	
-	private void glInit()
-	{
+	/**
+	 * Initializes OGL
+	 */
+	private void glInit() {
 		int width = mode.getWidth();
 		int height = mode.getHeight();
-		float ratio = (float) width / height;
-
+		float ratio = (float)width / height;
+		
 		// Go into orthographic projection mode.
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
@@ -230,9 +236,10 @@ public class SkunkJets {
 	 * Test entry point
 	 */
 	public static void main(String[] args) {
+		System.out.println("Change between fullscreen and windowed mode, by pressing F and W respectively");
+		System.out.println("Move quad using arrowkeys, and change rotation using +/-");
 		SkunkJets fswTest = new SkunkJets();
 		fswTest.execute();
 		System.exit(0);
 	}
-
 }
