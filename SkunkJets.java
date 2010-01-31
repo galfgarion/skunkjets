@@ -19,6 +19,9 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class SkunkJets
 {
+	private static final int MAX_JETS = 5;
+	private static final int TIME_BETWEEN_JET_SPAWN = 5;
+
 	/** Intended display mode */
 	private DisplayMode mode;
 
@@ -39,6 +42,8 @@ public class SkunkJets
 	private String ip_g;
 	private int port_g;
 	private ReadIn ri;
+
+	private static float lastJetSpawnTime = 0;
 
 	/**
 	 * Creates a FullScreenWindowedTest
@@ -175,8 +180,11 @@ public class SkunkJets
 				}
 				else if (lastButton == 1)
 				{
-					Jet newJet = new Jet(new Vector2f(p2w_x(Mouse.getX()), -1.0f), new Vector2f(0, 0.2f), true);
-					gameObjects.add(newJet);
+					if(canSpawnJet()) {
+						Jet newJet = new Jet(new Vector2f(p2w_x(Mouse.getX()), -1.0f), new Vector2f(0, 0.2f), true);
+						gameObjects.add(newJet);
+						lastJetSpawnTime = mainTimer.getTime();
+					}
 				}
 			}
 
@@ -215,6 +223,12 @@ public class SkunkJets
 			// Update window
 			Display.update();
 		}
+	}
+
+	private boolean canSpawnJet()
+	{
+		return ((SkunkJets.mainTimer.getTime() - lastJetSpawnTime ) >= TIME_BETWEEN_JET_SPAWN)
+		&& (jets.size() < MAX_JETS);
 	}
 
 	private void processMouse()
