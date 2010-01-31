@@ -32,6 +32,8 @@ public class SkunkJets
 	public float lowerYBound = -1f;
 	public float upperYBound = 1f;
 	
+	private float MIN_BASE_DISTANCE = 0.7f;
+	
 	//JetClient client;
 	
 	Cannon redCannon;
@@ -255,7 +257,17 @@ public class SkunkJets
 	   ArrayList<Explosion> destroyedExplosions = new ArrayList<Explosion>();
 		for (GameObject gameObject : gameObjects)
 		{
-			if (gameObject.update(timeDelta)) destroyedObjects.add(gameObject);
+			if (gameObject.update(timeDelta)) 
+			{
+			   explosions.add(new Explosion(gameObject.getPosition()));
+			   destroyedObjects.add(gameObject);
+			}
+         if((gameObject instanceof Jet) &&
+          (!gameObject.myTeam && gameObject.getPosition().y < -MIN_BASE_DISTANCE)) {
+            System.err.println("Jet reached base at " + gameObject.getPosition().y);
+            destroyedObjects.add(gameObject);
+            healthBar.decrease();
+         }
 		}
 		
 		for(int i = 0; i < gameObjects.size(); i++) {
@@ -264,23 +276,24 @@ public class SkunkJets
 						gameObjects.get(i).collide(gameObjects.get(j))) {
 					destroyedObjects.add(gameObjects.get(i));
 					destroyedObjects.add(gameObjects.get(j));
+					float midX, midY;
+					midX = (gameObjects.get(i).getPosition().x + gameObjects.get(j).getPosition().x)/2;
+               midY = (gameObjects.get(i).getPosition().y + gameObjects.get(j).getPosition().y)/2;
+					explosions.add(new Explosion(new Vector2f(midX, midY)));
 				}
 			}
 		}
 		
-		/*
-		for(Jet jet: jets) {
-			if(jet.getPosition().y < 0.0f) {
+		/*for(Jet jet : jets) {
+			if(jet.getPosition().y > MIN_BASE_DISTANCE) {
 				System.err.println("Jet reached base at " + jet.getPosition().y);
 				destroyedObjects.add(jet);
 				healthBar.decrease();
 			}
-		}
-		*/
+		}*/
 
 		// explode the objects
 		for(GameObject obj : destroyedObjects) {
-			explosions.add(new Explosion(obj.getPosition()));
 			gameObjects.remove(obj);
 			jets.remove(obj);
 		}
@@ -289,7 +302,6 @@ public class SkunkJets
 		{
 		   if (obj.update(timeDelta)) destroyedExplosions.add(obj);
 		}
-
 		
 		for (Explosion obj : destroyedExplosions)
 		   explosions.remove(obj);
@@ -313,6 +325,10 @@ public class SkunkJets
 		for (GameObject gameObject : gameObjects)
 		{
 			gameObject.draw();
+		}
+		for (Jet jet : jets)
+		{
+		   jet.draw();
 		}
 		for (Explosion obj : explosions)
 		   obj.draw();
@@ -462,9 +478,10 @@ public class SkunkJets
 		
 		if(DEBUG) System.err.println("spawnJet");
 	
-		gameObjects.add(new Jet(position, velocity, false));
+		Jet newJet = new Jet(position, velocity, false);
+		gameObjects.add(newJet);
 		//TODO unify handling spawning/removal of jets
-		jets.add(jet);
+		//jets.add(jet);
 	}
 
 	/**

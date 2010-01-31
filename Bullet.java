@@ -17,7 +17,7 @@ public class Bullet extends GameObject
 	}
 
 	public void innerDraw() {
-		ImageLib.drawImage(img, 0f, 0f, -90f, 32, 32);
+		ImageLib.drawImage(img, 0f, 0f, -90f, 50, 50);
 	}
 
 	public boolean update(double timeDelta)

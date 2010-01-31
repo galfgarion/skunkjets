@@ -7,6 +7,8 @@ public abstract class GameObject {
 	
 	private static final boolean DEBUG = false;
 	
+	public boolean myTeam;
+	
 	private Vector2f position;
 	private Vector2f velocity;
 	public int sprite;

@@ -18,7 +18,7 @@ public class ImageLib {
    static Hashtable<String,Integer> ImageStrings = new Hashtable<String,Integer>();
    static int keyValCurrent;
    
-   // This class is to present a small level of abstraction between the
+   // This class is to present a level of abstraction between the
    // game management code and the display of each 2D sprite
    public static int getImage(String filename)
    {
