@@ -22,6 +22,7 @@ public class SkunkJets
 {
 	private static final int MAX_JETS = 5;
 	private static final int TIME_BETWEEN_JET_SPAWN = 5;
+	private static final boolean DEBUG = false;
 
 	/** Intended display mode */
 	private DisplayMode mode;
@@ -431,7 +432,7 @@ public class SkunkJets
 		//position = new Vector2f(0, 1);
 		//velocity = new Vector2f(0, 0);
 		
-		System.err.println("spawnJet");
+		if(DEBUG) System.err.println("spawnJet");
 	
 		gameObjects.add(new Jet(position, velocity, false));
 	}
