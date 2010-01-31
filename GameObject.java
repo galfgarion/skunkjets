@@ -1,6 +1,5 @@
 import org.lwjgl.util.vector.Vector2f;
 
-
 public abstract class GameObject {
 
 	public Vector2f position;

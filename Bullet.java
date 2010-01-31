@@ -1,54 +1,62 @@
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
+<<<<<<< HEAD:src/Projectile.java
 
 public class Projectile extends GameObject {
 	private static float maxFiringRate = 1;
 	
 
+=======
+//test
+public class Bullet extends GameObject
+{
+	private Vector2f position;
+	private Vector2f velocity;
 	
-	public Projectile(Vector2f position, Vector2f velocity) {
+>>>>>>> e68d4d775d6343989df1da34e5d868792b0c9115:Bullet.java
+	
+	public Bullet(Vector2f position)
+	{
 		this.position = position;
+		this.velocity = new Vector2f(0, 0);
+	}
+	
+	void fire(Vector2f velocity)
+	{
 		this.velocity = velocity;
 	}
 
-	@Override
-	public void draw() {
+	public void draw()
+	{
 		// TODO Auto-generated method stub
-		
 		GL11.glPushMatrix();
 		{
 			GL11.glTranslatef(position.x, position.y, 0);
-			//GL11.glRotatef(angle, 0.0f, 0.0f, 1.0f);
-			
+			// GL11.glRotatef(angle, 0.0f, 0.0f, 1.0f);
+
 			GL11.glColor3f(1.0f, 1.0f, 1.0f);
-			
+
 			GL11.glBegin(GL11.GL_QUADS);
 			{
 				GL11.glVertex2d(-0.05, -0.05);
 				GL11.glVertex2d(0.05, -0.05);
 				GL11.glVertex2d(0.05, 0.05);
 				GL11.glVertex2d(-0.05, 0.05);
-				//System.err.println("at pixel " + (-50 + position.x) + "," + (-50 + position.y));
+				// System.err.println("at pixel " + (-50 + position.x) + "," +
+				// (-50 + position.y));
 			}
 			GL11.glEnd();
 		}
 		GL11.glPopMatrix();
-		
 	}
 
-	@Override
-	public void update(double timeDelta) {
+
+	public void update(double timeDelta)
+	{
 		// TODO Auto-generated method stub
 		Vector2f moveDelta = new Vector2f(velocity);
-		moveDelta.scale((float)timeDelta);
-		Vector2f.add(position, moveDelta, position);	
+		moveDelta.scale((float) timeDelta);
+		Vector2f.add(position, moveDelta, position);
 	}
-	
-	
-	// max rounds per second
-	public float maxFiringRate() {
-		return maxFiringRate;
-	}
-
 }
