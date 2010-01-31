@@ -57,8 +57,7 @@ public class Jet extends GameObject {
 	
 	@Override
 	public void innerDraw() {
-		float angle = myTeam ? 0 : 180;
-		ImageLib.drawImage(img, getPosition().x, getPosition().y, angle);
+		ImageLib.drawImage(img, 0, 0, -90);
 	}
 
 }

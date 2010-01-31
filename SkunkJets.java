@@ -66,7 +66,7 @@ public class SkunkJets {
 			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f), true));
 			
 			// TODO testing
-			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0,0), false));
+			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0f,-.01f), false));
 
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
