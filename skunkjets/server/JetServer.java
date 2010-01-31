@@ -52,8 +52,7 @@ public class JetServer {
 
 		int playerNumber = 0;
 		while (listening) {
-			ListenerThread temp = new ListenerThread(this,
-					playerNumber++, serverSocket.accept());
+			ListenerThread temp = new ListenerThread(this, playerNumber++, serverSocket.accept());
 			System.out.println("Client Added");
 			people.add(temp);
 			

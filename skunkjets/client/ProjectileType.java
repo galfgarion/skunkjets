@@ -26,9 +26,9 @@ public abstract class ProjectileType
 		return speed;
 	}
 
-	public Bullet fire(Vector2f position, Vector2f velocity, boolean myTeam, int id)
+	public Bullet fire(Vector2f position, Vector2f velocity, boolean myTeam, int id, String type)
 	{
-		Bullet bullet = new Bullet(position, img, myTeam, id);
+		Bullet bullet = new Bullet(position, img, myTeam, id, type);
 		bullet.fire(velocity);
 		return bullet;
 	}

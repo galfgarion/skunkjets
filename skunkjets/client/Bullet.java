@@ -4,12 +4,13 @@ import org.lwjgl.util.vector.Vector2f;
 public class Bullet extends GameObject
 {
 	public int img;
+	public String type;
 	
-	public Bullet(Vector2f position, int img, boolean myTeam, int id)
-	{
+	public Bullet(Vector2f position, int img, boolean myTeam, int id, String type) {
 		super(position, new Vector2f(0, 0), myTeam, id); // myTeam is setting visibility
 		this.myTeam = myTeam;
 		this.img = img;
+		this.type = type;
 		radius = 0.15;
 	}
 	

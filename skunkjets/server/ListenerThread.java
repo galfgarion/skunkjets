@@ -1,5 +1,3 @@
-// moo
-
 package skunkjets.server;
 
 import java.io.IOException;
@@ -49,7 +47,7 @@ class PlayerData {
 				positionAndVelocity = object.getPosition().x + " " + object.getPosition().y + " " + object.getVelocity().x + " " + object.getVelocity().y;
 				
 			if (object instanceof Bullet)
-				stream.println("bullet " + friendly + " " + ((Bullet)object).img + " " + positionAndVelocity);
+				stream.println("bullet " + ((Bullet)object).img + " " + ((Bullet)object).type + " " + positionAndVelocity);
 			else if (object instanceof Jet)
 				stream.println("jet " + friendly + " " + object.id + " " + positionAndVelocity);
 			else if (object instanceof Cannon)
@@ -102,10 +100,11 @@ class ListenerThread extends Thread {
 		
 		try {
 			Scanner in = new Scanner(socket.getInputStream());
-
+			
 			outerloop:
 			while (true) {
 				String line = in.nextLine();
+				System.out.println("Thread " + playerData.playerNumber + " Got line: " + line);
 				String[] tokens = line.split(" ");
 
 				final List<String> types = Arrays
@@ -165,7 +164,7 @@ class ListenerThread extends Thread {
 
 					Vector2f velocity = new Vector2f(velX, velY);
 					//TODO fix start of bullet
-					Bullet bullet = currentProjectile.fire(new Vector2f(new Vector2f(0, -1)), velocity, true, logicThread.getNewID());
+					Bullet bullet = currentProjectile.fire(new Vector2f(new Vector2f(0, -1)), velocity, true, logicThread.getNewID(), missileType);
 					playerData.addObject(bullet);
 					
 					break;

@@ -66,9 +66,9 @@ public class SkunkJets {
 			Bullet bullet = null;
 			
 			if (missileType.equals("rocket"))
-				bullet = game.rocket.fire(new Vector2f(newX, newY), new Vector2f(newVX, newVY), true, id);
+				bullet = game.rocket.fire(new Vector2f(newX, newY), new Vector2f(newVX, newVY), true, id, missileType);
 			else
-				bullet = game.rocket.fire(new Vector2f(newX, newY), new Vector2f(newVX, newVY), true, id);
+				bullet = game.rocket.fire(new Vector2f(newX, newY), new Vector2f(newVX, newVY), true, id, missileType);
 			/* AAAHHHH game.beam.fire...; */ 
 			
 			game.gameObjects.add(bullet);
@@ -182,7 +182,7 @@ public class SkunkJets {
 		    }
 		    
 		    if (lastButton != -1) {
-				out.println("addmissile " + redCannon.orientation);
+				out.println("addmissile beam " + redCannon.orientation);
 		    }
 			
 			Timer.tick();
@@ -217,6 +217,8 @@ public class SkunkJets {
 			
 			// Update window
 			Display.update();
+			
+			gameObjects.clear();
 		}
 	}
 
@@ -348,9 +350,10 @@ class ReadIn extends Thread {
 		while (true) {
 			if (jc.in.hasNextLine()) {
 				String wholeLine = jc.in.nextLine();
+				System.out.println("Got line: " + wholeLine);
 				assert wholeLine.length() > 0;
 				String[] tokens = wholeLine.split(" ");
-				final List<String> types = Arrays.asList(new String[]{ "changejet", "addmissile" });
+				final List<String> types = Arrays.asList(new String[]{ "jet", "bullet", "cannon" });
 				synchronized (waitingNotifications) {
 					switch (types.indexOf(tokens[0])) {
 					case 0:
@@ -359,6 +362,11 @@ class ReadIn extends Thread {
 					case 1:
 						waitingNotifications.add(new SkunkJets.AddMissileNotification(tokens));
 						break;
+					case 2:
+						//waitingNotifications.add(new SkunkJets.)
+						break;
+					default:
+						System.out.println("unknown command");
 					}
 				}
 			}
