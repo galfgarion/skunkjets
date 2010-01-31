@@ -18,7 +18,7 @@ public class Bullet extends GameObject
 
 	public void innerDraw()
 	{
-		ImageLib.drawImage(img, getPosition().x, getPosition().y, (float)Math.atan2(getVelocity().y, getVelocity().x));
+		ImageLib.drawImage(img, 0f, 0f, 90f);
 	}
 
 	public void update(double timeDelta)
