@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -8,11 +11,11 @@ class Cannon extends GameObject
 	private float orientation;
 	private float radius;
 	private float red, green, blue;
-	private float projectileSpeed = 0.5f;
 
 	private double lastFireTime = 0;
 
-	private Projectile curProjectile = new RocketProjectile(null, null);
+	private ProjectileType curProjectile = new RocketProjectile();
+	ArrayList<Bullet> bullets;
 
 	public Cannon(Vector2f center, float radius, float orientation)
 	{
@@ -22,6 +25,7 @@ class Cannon extends GameObject
 		this.red = 1.0f;
 		this.green = 0.0f;
 		this.blue = 1.0f;
+		bullets = new ArrayList<Bullet>();
 	}
 
 	public Cannon setColor(float red, float green, float blue)
@@ -48,18 +52,20 @@ class Cannon extends GameObject
 
 	public boolean canFire(double time)
 	{
-		return ((time - lastFireTime) >= (1.0f / curProjectile.getFiringRate()));
+		return ((time - lastFireTime) >= (1.0f / curProjectile.getFiringRate()))
+			&& (curProjectile.count < curProjectile.maxBullets);
 	}
 
-	public Projectile fire(double time)
+	public Bullet fire(double time)
 	{
 		lastFireTime = time;
-		float velX = (float) (projectileSpeed * Math.cos(orientation * DEG_TO_RAD));
-		float velY = (float) (projectileSpeed * Math.sin(orientation * DEG_TO_RAD));
+		float velX = (float) (curProjectile.getSpeed() * Math.cos(orientation * DEG_TO_RAD));
+		float velY = (float) (curProjectile.getSpeed() * Math.sin(orientation * DEG_TO_RAD));
 
 		Vector2f velocity = new Vector2f(velX, velY);
-		Projectile bullet = new RocketProjectile(new Vector2f(getPosition()), velocity);
-
+		//TODO fix start of bullet
+		Bullet bullet = curProjectile.fire(new Vector2f(getPosition()), velocity);
+		bullets.add(bullet);
 		return bullet;
 	}
 

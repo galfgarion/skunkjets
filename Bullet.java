@@ -1,11 +1,15 @@
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
-public class Bullet extends GameObject {
-	private static float maxFiringRate = 1;
+public class Bullet extends GameObject
+{
+	int img;
 	
-	public Bullet(Vector2f position, Vector2f velocity) {
-		super(position, velocity);
+	public Bullet(Vector2f position, int img)
+	{
+		super(position, new Vector2f(0, 0));
+		this.img = img;
 	}
 	
 	void fire(Vector2f velocity) {
@@ -14,20 +18,8 @@ public class Bullet extends GameObject {
 
 	public void innerDraw()
 	{
-			GL11.glColor3f(1.0f, 1.0f, 1.0f);
-
-			GL11.glBegin(GL11.GL_QUADS);
-			{
-				GL11.glVertex2d(-0.05, -0.05);
-				GL11.glVertex2d(0.05, -0.05);
-				GL11.glVertex2d(0.05, 0.05);
-				GL11.glVertex2d(-0.05, 0.05);
-				// System.err.println("at pixel " + (-50 + position.x) + "," +
-				// (-50 + position.y));
-			}
-			GL11.glEnd();
+		ImageLib.drawImage(img, getPosition().x, getPosition().y, (float)Math.atan2(getVelocity().y, getVelocity().x));
 	}
-
 
 	public void update(double timeDelta)
 	{

@@ -1,10 +1,12 @@
-import org.lwjgl.util.vector.Vector2f;
 
+public class RocketProjectile extends ProjectileType
+{
 
-public class RocketProjectile extends Projectile {
-	public RocketProjectile(Vector2f position, Vector2f velocity) {
-		super(position, velocity);
+	public RocketProjectile()
+	{
 		firingRate = 0.5f;
-		//img = ;
+		speed = 0.5f;
+		img = ImageLib.getImage("Images/missile.png");
+		maxBullets = 10;
 	}
 }

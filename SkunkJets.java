@@ -57,12 +57,16 @@ public class SkunkJets {
 			Display.create();
 			glInit();
 
-			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1/20f, 90).setColor(1.0f, 0.0f, 0.0f));
+			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
 			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
-			
-		} catch (Exception e) {
+
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
+		
 	}
 	/**
 	 * Runs the main loop of the "test"
@@ -174,38 +178,16 @@ public class SkunkJets {
 		}
 		//check for speed changes
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-			//quadVelocity.y += 0.1f;
 			jet.speedUp();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-			//quadVelocity.y -= 0.1f;
 			jet.slowDown();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-			//redCannon.turnRight(1f);
-			//jet.position.x -= 1/20f;
 			jet.turnRight();
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-			//redCannon.turnLeft(1f);
-			//quadVelocity.x -= 0.1f;
-			//jet.position.x += 1/20f;
 			jet.turnLeft();
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_ADD)) {
-			//angleRotation += 0.1f;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SUBTRACT)) {
-			//angleRotation -= 0.1f;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			double time = mainTimer.getTime();
-			if(redCannon.canFire(time)) {
-				GameObject missile = redCannon.fire(time); 
-				//connection.sendNewGameObject(missile);
-				System.out.println(missile.getPosition().x + "," + missile.getPosition().y);
-				gameObjects.add(missile);
-			}
 		}
 	}
 	

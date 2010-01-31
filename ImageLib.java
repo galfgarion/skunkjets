@@ -4,6 +4,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.*;
 
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 
@@ -24,7 +25,7 @@ public class ImageLib {
    
    // This class is to present a small level of abstraction between the
    // game management code and the display of each 2D sprite
-   public int getImage(String filename)
+   public static int getImage(String filename)
    {
       GLImage img;
       
@@ -37,18 +38,21 @@ public class ImageLib {
       return keyValCurrent - 1;
    }
    
-   public int drawImage(int imgVal, int x, int y, float angle)
+   public static int drawImage(int imgVal, float x, float y, float angle)
    {
       Integer imgKey = new Integer(imgVal);
       GLImage img;
       if (!Images.containsKey(imgKey)) return -1;
       
       img = (GLImage) Images.get(imgKey);
-      drawImage(img, x, y, img.w, img.h, angle);
+      float width = ((float)img.w) * 2 /Display.getDisplayMode().getHeight();
+      float height = ((float)img.h * 2 /Display.getDisplayMode().getHeight());
+      drawImage(img, x, y, width, height, angle);
       return 0;
    }
    
-   public int drawImage(int imgVal, int x, int y, float angle, int w, int h)
+   // BAD METHOD***
+   public static int drawImage(int imgVal, float x, float y, float angle, int w, int h)
    {
       Integer imgKey = new Integer(imgVal);
       GLImage img;
@@ -69,13 +73,14 @@ public class ImageLib {
       return null;
   }
    
-   private static void drawImage(GLImage img, int x, int y, float w, float h, float r) {
+   private static void drawImage(GLImage img, float x, float y, float w, float h, float r) {
       // if image has no texture, convert the image to a texture
       if (img.textureHandle <= 0) {
          img.textureHandle = makeTexture(img);
       }
       // preserve settings
       //pushAttribOrtho();
+      GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_TEXTURE_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_LIGHTING_BIT);
       // set color to white
       //GL11.glColor4f(1,1,1,1);   // don't force color to white (may want to tint image)
         // activate the image texture
@@ -102,6 +107,7 @@ public class ImageLib {
         GL11.glPopMatrix();
         // return to previous settings
         //popAttrib();
+        GL11.glPopAttrib();
     }
    
    private static int makeTexture(GLImage textureImg)
