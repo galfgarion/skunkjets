@@ -15,14 +15,21 @@ public class ImageLib {
    static Hashtable OpenGLextensions;
    
    static Hashtable<Integer,GLImage> Images = new Hashtable<Integer,GLImage>();
+   static Hashtable<String,Integer> ImageStrings = new Hashtable<String,Integer>();
    static int keyValCurrent;
    
    // This class is to present a small level of abstraction between the
    // game management code and the display of each 2D sprite
    public static int getImage(String filename)
    {
-      GLImage img = loadImage(filename);
+      GLImage img;
+      
+      if (ImageStrings.containsKey(filename)) return ((Integer)ImageStrings.get(filename)).intValue();
+      
+      img = loadImage(filename);
+      ImageStrings.put(filename, new Integer(keyValCurrent));
       Images.put(new Integer(keyValCurrent++), img);
+      
       return keyValCurrent - 1;
    }
    
