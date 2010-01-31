@@ -13,7 +13,7 @@ class Cannon extends GameObject
 
 	private double lastFireTime = -10000;
 
-	private ProjectileType curProjectile = new RocketProjectile();
+	private ProjectileType curProjectile;
 	ArrayList<Bullet> bullets;
 
 	public Cannon(Vector2f center, float radius, float orientation)
@@ -32,6 +32,10 @@ class Cannon extends GameObject
 		this.green = green;
 		this.blue = blue;
 		return this;
+	}
+	public void setCurProjectile(ProjectileType curProjectile)
+	{
+		this.curProjectile = curProjectile;
 	}
 
 	@Override

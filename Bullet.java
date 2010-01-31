@@ -8,6 +8,7 @@ public class Bullet extends GameObject
 	{
 		super(position, new Vector2f(0, 0));
 		this.img = img;
+		radius = 0.15;
 	}
 	
 	void fire(Vector2f velocity) {

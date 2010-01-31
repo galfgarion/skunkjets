@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.lwjgl.LWJGLException;
@@ -21,6 +22,8 @@ public class SkunkJets {
 	Jet jet;
 	
 	public static Timer mainTimer = new Timer();
+	ProjectileType rocket = new RocketProjectile();
+	ProjectileType beam = new BeamProjectile();
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
 	
 	/**
@@ -49,6 +52,7 @@ public class SkunkJets {
 	 */
 	private void initialize()
 	{
+			
 		try
 		{
 			// find displaymode
@@ -58,7 +62,11 @@ public class SkunkJets {
 			glInit();
 
 			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
+			redCannon.setCurProjectile(rocket);
 			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
+			
+			// TODO testing
+			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0,0)));
 
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
 		}
@@ -138,6 +146,22 @@ public class SkunkJets {
 	private void logic(double timeDelta) {
 		for (GameObject gameObject : gameObjects)
 			gameObject.update(timeDelta);
+		
+		ArrayList<GameObject> destroyedObjects = new ArrayList<GameObject>();
+		for(int i = 0; i < gameObjects.size(); i++) {
+			for(int j=i + 1; j < gameObjects.size(); j++) {
+				if(gameObjects.get(i) != redCannon && gameObjects.get(j) != redCannon &&
+						gameObjects.get(i).collide(gameObjects.get(j))) {
+					destroyedObjects.add(gameObjects.get(i));
+					destroyedObjects.add(gameObjects.get(j));
+				}
+			}
+		}
+		
+		// explode the objects
+		for(GameObject obj : destroyedObjects) {
+			gameObjects.remove(obj);
+		}
 	}
 	
 	private void render() {
@@ -158,36 +182,35 @@ public class SkunkJets {
 	}
 	
 	private void processKeyboard() {
-		//check for fullscreen key
-		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-			try {
-				switchMode();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		//check for window key
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			try {
-				mode = new DisplayMode(1440, 900);
-				Display.setDisplayModeAndFullscreen(mode);
-				glInit();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		//check for speed changes
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			jet.speedUp();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			jet.slowDown();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			jet.turnRight();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			jet.turnLeft();
+		}
+		
+		//check weapon switch
+		if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
+			redCannon.setCurProjectile(rocket);
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
+			redCannon.setCurProjectile(beam);
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_3)) {
+			
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_4)) {
+			
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_5)) {
+			
 		}
 	}
 	
