@@ -6,7 +6,7 @@ class Cannon extends GameObject
 	static final float DEG_TO_RAD = (float) Math.PI / 180.0f;
 
 	private float orientation;
-	private float centerX, centerY, radius;
+	private float radius;
 	private float red, green, blue;
 	private float projectileSpeed = 0.5f;
 
@@ -14,10 +14,9 @@ class Cannon extends GameObject
 
 	private Projectile curProjectile = new RocketProjectile(null, null);
 
-	public Cannon(float centerX, float centerY, float radius, float orientation)
+	public Cannon(Vector2f center, float radius, float orientation)
 	{
-		this.centerX = centerX;
-		this.centerY = centerY;
+		super(center, new Vector2f(0, 0));
 		this.radius = radius;
 		this.orientation = orientation; // degrees, 90.0 is pointed up positive y axis
 		this.red = 1.0f;
@@ -59,19 +58,17 @@ class Cannon extends GameObject
 		float velY = (float) (projectileSpeed * Math.sin(orientation * DEG_TO_RAD));
 
 		Vector2f velocity = new Vector2f(velX, velY);
-		Projectile bullet = new RocketProjectile(new Vector2f(centerX, centerY), velocity);
+		Projectile bullet = new RocketProjectile(getPosition(), velocity);
 
 		return bullet;
 	}
 
-	private static void drawCircle()
-	{
+	private static void drawCircle() {
 		final int numVertices = 60;
 
 		Vector2f vertices[] = new Vector2f[numVertices];
 
-		for (int i = 0; i < numVertices; i++)
-		{
+		for (int i = 0; i < numVertices; i++) {
 			vertices[i] = new Vector2f();
 			vertices[i].x = (float) Math.cos(i * 2 * Math.PI / numVertices);
 			vertices[i].y = (float) Math.sin(i * 2 * Math.PI / numVertices);
@@ -84,10 +81,8 @@ class Cannon extends GameObject
 		GL11.glEnd();
 	}
 
-	public void draw()
+	public void innerDraw()
 	{
-		GL11.glPushMatrix();
-		GL11.glTranslated(centerX, centerY, 0);
 		GL11.glScalef(radius, radius, 1);
 
 		GL11.glColor3f(red, green, blue);
@@ -107,7 +102,5 @@ class Cannon extends GameObject
 		GL11.glVertex2f(barrelX + 1, -barrelY);
 		GL11.glVertex2f(barrelX, -barrelY);
 		GL11.glEnd();
-
-		GL11.glPopMatrix();
 	}
 }

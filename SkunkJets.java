@@ -57,7 +57,7 @@ public class SkunkJets {
 			Display.create();
 			glInit();
 
-			gameObjects.add(redCannon = new Cannon(0, -1, 1/20f, 90).setColor(1.0f, 0.0f, 0.0f));
+			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1/20f, 90).setColor(1.0f, 0.0f, 0.0f));
 			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
 			
 		} catch (Exception e) {

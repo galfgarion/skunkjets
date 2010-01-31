@@ -11,4 +11,8 @@ public class RocketProjectile extends Projectile
 		//img = ;
 	}
 
+	public void innerDraw() {
+		
+	}
+	
 }

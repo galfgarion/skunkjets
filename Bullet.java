@@ -3,29 +3,17 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class Bullet extends GameObject {
 	private static float maxFiringRate = 1;
-	private Vector2f position;
-	private Vector2f velocity;
 	
-	
-	public Bullet(Vector2f position)
-	{
-		this.position = position;
-		this.velocity = new Vector2f(0, 0);
+	public Bullet(Vector2f position, Vector2f velocity) {
+		super(position, velocity);
 	}
 	
-	void fire(Vector2f velocity)
-	{
-		this.velocity = velocity;
+	void fire(Vector2f velocity) {
+		this.setVelocity(velocity);
 	}
 
-	public void draw()
+	public void innerDraw()
 	{
-		// TODO Auto-generated method stub
-		GL11.glPushMatrix();
-		{
-			GL11.glTranslatef(position.x, position.y, 0);
-			// GL11.glRotatef(angle, 0.0f, 0.0f, 1.0f);
-
 			GL11.glColor3f(1.0f, 1.0f, 1.0f);
 
 			GL11.glBegin(GL11.GL_QUADS);
@@ -38,16 +26,14 @@ public class Bullet extends GameObject {
 				// (-50 + position.y));
 			}
 			GL11.glEnd();
-		}
-		GL11.glPopMatrix();
 	}
 
 
 	public void update(double timeDelta)
 	{
 		// TODO Auto-generated method stub
-		Vector2f moveDelta = new Vector2f(velocity);
+		Vector2f moveDelta = new Vector2f(getVelocity());
 		moveDelta.scale((float) timeDelta);
-		Vector2f.add(position, moveDelta, position);
+		Vector2f.add(getPosition(), moveDelta, getPosition());
 	}
 }
