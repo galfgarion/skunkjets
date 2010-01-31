@@ -9,18 +9,17 @@ class Cannon extends GameObject
 	static final float DEG_TO_RAD = (float) Math.PI / 180.0f;
 
 	private float orientation;
-	private Vector2f center;
 	private float radius;
 	private float red, green, blue;
 
 	private double lastFireTime = 0;
 
-	private Projectile curProjectile = new RocketProjectile(null, null);
+	private ProjectileType curProjectile = new RocketProjectile(null, null);
 	ArrayList<Bullet> bullets;
 
-	public Cannon(float centerX, float centerY, float radius, float orientation)
+	public Cannon(Vector2f center, float radius, float orientation)
 	{
-		this.center = new Vector2f(centerX, centerY);
+		super(center, new Vector2f(0, 0));
 		this.radius = radius;
 		this.orientation = orientation; // degrees, 90.0 is pointed up positive y axis
 		this.red = 1.0f;
@@ -65,40 +64,31 @@ class Cannon extends GameObject
 
 		Vector2f velocity = new Vector2f(velX, velY);
 		//TODO fix start of bullet
-		Bullet bullet = curProjectile.fire(new Vector2f(center), velocity);
+		Bullet bullet = curProjectile.fire(new Vector2f(getPosition()), velocity);
 		bullets.add(bullet);
 		return bullet;
 	}
 
-	private static void drawCircle()
-	{
+	private static void drawCircle() {
 		final int numVertices = 60;
 
 		Vector2f vertices[] = new Vector2f[numVertices];
 
-		for (int i = 0; i < numVertices; i++)
-		{
+		for (int i = 0; i < numVertices; i++) {
 			vertices[i] = new Vector2f();
 			vertices[i].x = (float) Math.cos(i * 2 * Math.PI / numVertices);
 			vertices[i].y = (float) Math.sin(i * 2 * Math.PI / numVertices);
-			//System.out.println(i * 360.0f / numVertices);
 		}
 
 		GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-		for (int i = 0; i < numVertices; i++)
-		{
-			float x = vertices[i].x;
-			float y = vertices[i].y;
-			//System.out.println("vertexxing at " + x + "," + y);
-			GL11.glVertex2f(x, y);
+		for (int i = 0; i < numVertices; i++) {
+			GL11.glVertex2f(vertices[i].x, vertices[i].y);
 		}
 		GL11.glEnd();
 	}
 
-	public void draw()
+	public void innerDraw()
 	{
-		GL11.glPushMatrix();
-		GL11.glTranslated(center.x, center.y, 0);
 		GL11.glScalef(radius, radius, 1);
 
 		GL11.glColor3f(red, green, blue);
@@ -118,7 +108,5 @@ class Cannon extends GameObject
 		GL11.glVertex2f(barrelX + 1, -barrelY);
 		GL11.glVertex2f(barrelX, -barrelY);
 		GL11.glEnd();
-
-		GL11.glPopMatrix();
 	}
 }

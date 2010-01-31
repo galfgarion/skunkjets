@@ -1,41 +1,68 @@
+import java.util.Vector;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 public class Jet extends GameObject {
 	
-	public Vector2f position;
-	public Vector2f velocity;
-	
 	public Jet(Vector2f position, Vector2f velocity) {
-		this.position = position;
-		this.velocity = velocity;
+		super(position, velocity);
 	}
 	
+	@Override
 	public void update(double timeDelta) {
-		Vector2f moveDelta = new Vector2f(velocity);
+		Vector2f moveDelta = new Vector2f(getVelocity());
 		moveDelta.scale((float)timeDelta);
-		Vector2f.add(position, moveDelta, position);
+		Vector2f.add(getPosition(), moveDelta, getPosition());
 	}
 	
-	public void draw() {
-		GL11.glPushMatrix();
-		{
-			GL11.glTranslatef(position.x, position.y, 0);
-			//GL11.glRotatef(angle, 0.0f, 0.0f, 1.0f);
-			
-			GL11.glColor3f(1.0f, 1.0f, 1.0f);
-			
-			GL11.glBegin(GL11.GL_QUADS);
-			{
-				GL11.glVertex2d(-0.05, -0.05);
-				GL11.glVertex2d(0.05, -0.05);
-				GL11.glVertex2d(0.05, 0.05);
-				GL11.glVertex2d(-0.05, 0.05);
-				//System.err.println("at pixel " + (-50 + position.x) + "," + (-50 + position.y));
-			}
-			GL11.glEnd();
+	public void speedUp() {
+		this.getVelocity().scale(70/69f);
+		float speed = this.getVelocity().length();
+		if (speed >= .5f) {
+			this.getVelocity().x *= .5f / speed;
+			this.getVelocity().y *= .5f / speed;
 		}
-		GL11.glPopMatrix();
+	}
+	
+	public void slowDown() {
+		this.getVelocity().scale(69/70f);
+		float speed = this.getVelocity().length();
+		if (speed < .1f) {
+			this.getVelocity().x *= .1f / speed;
+			this.getVelocity().y *= .1f / speed;
+		}
+	}
+	
+	public void turnLeft() {
+		float distance = this.getVelocity().length();
+		float angleRads = (float)Math.atan2(this.getVelocity().y, this.getVelocity().x);
+		angleRads += 2f / 180 * Math.PI;
+		this.getVelocity().x = (float)Math.cos(angleRads) * distance;
+		this.getVelocity().y = (float)Math.sin(angleRads) * distance;
+	}
+	
+	public void turnRight() {
+		float distance = this.getVelocity().length();
+		float angleRads = (float)Math.atan2(this.getVelocity().y, this.getVelocity().x);
+		angleRads -= 2f / 180 * Math.PI;
+		this.getVelocity().x = (float)Math.cos(angleRads) * distance;
+		this.getVelocity().y = (float)Math.sin(angleRads) * distance;
+	}
+	
+	@Override
+	public void innerDraw() {
+		GL11.glColor3f(1.0f, 1.0f, 1.0f);
+		
+		GL11.glBegin(GL11.GL_QUADS);
+		{
+			GL11.glVertex2d(-0.05, -0.05);
+			GL11.glVertex2d(0.05, -0.05);
+			GL11.glVertex2d(0.05, 0.05);
+			GL11.glVertex2d(-0.05, 0.05);
+			//System.err.println("at pixel " + (-50 + position.x) + "," + (-50 + position.y));
+		}
+		GL11.glEnd();
 	}
 
 }
