@@ -21,6 +21,9 @@ public class SkunkJets {
 	Cannon redCannon;
 	Jet jet;
 	
+	ProjectileType rocket = new RocketProjectile();
+	ProjectileType beam = new BeamProjectile();
+	
 	Timer mainTimer = new Timer();
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
 	
@@ -60,6 +63,7 @@ public class SkunkJets {
 			glInit();
 
 			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
+			redCannon.setCurProjectile(rocket);
 			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 1f)));
 			
 			// TODO testing
@@ -179,36 +183,35 @@ public class SkunkJets {
 	}
 	
 	private void processKeyboard() {
-		//check for fullscreen key
-		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
-			try {
-				switchMode();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		//check for window key
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-			try {
-				mode = new DisplayMode(1440, 900);
-				Display.setDisplayModeAndFullscreen(mode);
-				glInit();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 		//check for speed changes
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			jet.speedUp();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			jet.slowDown();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			jet.turnRight();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			jet.turnLeft();
+		}
+		
+		//check weapon switch
+		if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
+			redCannon.setCurProjectile(rocket);
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
+			redCannon.setCurProjectile(beam);
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_3)) {
+			
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_4)) {
+			
+		}
+		else if (Keyboard.isKeyDown(Keyboard.KEY_5)) {
+			
 		}
 	}
 	
