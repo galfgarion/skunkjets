@@ -1,6 +1,8 @@
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -11,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Timer;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 public class SkunkJets {
 	/** Intended display mode */
@@ -180,7 +183,7 @@ public class SkunkJets {
 	
 	private void processKeyboard() {
 		//check for fullscreen key
-		if (Keyboard.isKeyDown(Keyboard.KEY_F)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_ADD)) {
 			try {
 				switchMode();
 			} catch (Exception e) {
@@ -197,19 +200,56 @@ public class SkunkJets {
 				e.printStackTrace();
 			}
 		}
-		//check for speed changes
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-			jet.speedUp();
+		
+		HashMap<Integer, Integer> slotKeys = new HashMap<Integer, Integer>();
+		slotKeys.put(Keyboard.KEY_A, 1);
+		slotKeys.put(Keyboard.KEY_S, 2);
+		slotKeys.put(Keyboard.KEY_D, 3);
+		slotKeys.put(Keyboard.KEY_F, 4);
+		slotKeys.put(Keyboard.KEY_G, 5);
+		slotKeys.put(Keyboard.KEY_H, 6);
+		slotKeys.put(Keyboard.KEY_J, 7);
+		slotKeys.put(Keyboard.KEY_K, 8);
+		slotKeys.put(Keyboard.KEY_L, 9);
+		slotKeys.put(Keyboard.KEY_SEMICOLON, 10);
+		
+		for(Entry<Integer, Integer> entry: slotKeys.entrySet()) {
+			if(Keyboard.isKeyDown(entry.getKey())) {
+				spawnJet(entry.getValue());
+			}
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-			jet.slowDown();
+		/*
+		
+		if(Keyboard.isKeyDown(Keyboard.KEY_A)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_A);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-			jet.turnRight();
+		if(Keyboard.isKeyDown(Keyboard.KEY_S)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_S);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-			jet.turnLeft();
+		if(Keyboard.isKeyDown(Keyboard.KEY_D)) {
+			//gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0, 0)));
+			spawnJet(Keyboard.KEY_D);
 		}
+		*/
+		
+	}
+	
+	private void spawnJet(int slot) {
+		double sspaceLeft = -(float)mode.getWidth() / mode.getHeight();
+		double sspaceWidth = 2.0 * (float)mode.getWidth() / mode.getHeight();
+		double posx = slot * (sspaceWidth / 10f) + sspaceLeft;
+	
+		Vector2f position = new Vector2f((float) posx, 1);
+		Vector2f velocity = new Vector2f(0.0f, -0.2f);
+		
+		//position = new Vector2f(0, 1);
+		//velocity = new Vector2f(0, 0);
+		
+		System.err.println("spawnJet");
+	
+		gameObjects.add(new Jet(position, velocity));
 	}
 	
 	/**
