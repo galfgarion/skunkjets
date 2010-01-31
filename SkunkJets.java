@@ -70,7 +70,7 @@ public class SkunkJets {
 	 * Initializes the test
 	 */
 	private void initialize() {
-		connectToServer();
+		//connectToServer();
 
 		try {
 			// find displaymode
