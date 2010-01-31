@@ -13,7 +13,7 @@ public class Jet extends GameObject {
 		super(position, velocity, myTeam);
 		this.myTeam = myTeam;
 		radius = 0.05;
-		visibilityRadius = 0.2;
+		visibilityRadius = 0.175;
 		if (myTeam)
 		{
 			img = ImageLib.getImage("Images/Jet blue.png");
@@ -70,8 +70,15 @@ public class Jet extends GameObject {
 
 	
 	@Override
-	public void innerDraw() {
-		ImageLib.drawImage(img, 0, 0, -90);
+	public void innerDraw(SkunkJets game) {
+	   if (game.jet == this) {
+   	   GL11.glPushMatrix();
+   	   GL11.glScalef(.06f, .06f, 1);
+   	   drawCircle();
+   	   GL11.glPopMatrix();
+	   }
+	   
+		ImageLib.drawImage(img, 0, 0, -90, 64, 64);
 	}
 
 }

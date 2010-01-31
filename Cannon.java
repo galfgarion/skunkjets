@@ -15,7 +15,8 @@ class Cannon extends GameObject
 
 	private ProjectileType curProjectile;
 	ArrayList<Bullet> bullets;
-
+	int img;
+	
 	public Cannon(Vector2f center, float radius, float orientation, boolean myTeam)
 	{
 		super(center, new Vector2f(0, 0), myTeam);
@@ -26,6 +27,14 @@ class Cannon extends GameObject
 		this.green = 0.0f;
 		this.blue = 1.0f;
 		bullets = new ArrayList<Bullet>();
+		if (myTeam)
+		{
+		   img = ImageLib.getImage("Images/turret blue.png");
+		}
+		else
+		{
+		   img = ImageLib.getImage("Images/turret red.png");
+		}
 	}
 
 	public Cannon setColor(float red, float green, float blue) {
@@ -79,27 +88,12 @@ class Cannon extends GameObject
 		return bullet;
 	}
 
-	private static void drawCircle() {
-		final int numVertices = 60;
-
-		Vector2f vertices[] = new Vector2f[numVertices];
-
-		for (int i = 0; i < numVertices; i++) {
-			vertices[i] = new Vector2f();
-			vertices[i].x = (float) Math.cos(i * 2 * Math.PI / numVertices);
-			vertices[i].y = (float) Math.sin(i * 2 * Math.PI / numVertices);
-		}
-
-		GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-		for (int i = 0; i < numVertices; i++) {
-			GL11.glVertex2f(vertices[i].x, vertices[i].y);
-		}
-		GL11.glEnd();
-	}
-
-	public void innerDraw()
+	public void innerDraw(SkunkJets game)
 	{
-		GL11.glScalef(radius, radius, 1);
+	   int angle = myTeam ? -90 : 90;
+	   ImageLib.drawImage(img, 0, 0, orientation + angle, 128, 128);
+	   
+		/*GL11.glScalef(radius, radius, 1);
 
 		GL11.glColor3f(red, green, blue);
 		drawCircle();
@@ -117,6 +111,6 @@ class Cannon extends GameObject
 		GL11.glVertex2f(barrelX + 1, barrelY);
 		GL11.glVertex2f(barrelX + 1, -barrelY);
 		GL11.glVertex2f(barrelX, -barrelY);
-		GL11.glEnd();
+		GL11.glEnd();*/
 	}
 }

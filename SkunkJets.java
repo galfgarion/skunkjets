@@ -32,7 +32,10 @@ public class SkunkJets
 	public float lowerYBound = -1f;
 	public float upperYBound = 1f;
 	
-	private float MIN_BASE_DISTANCE = 0.7f;
+	private float MIN_BASE_DISTANCE = 0.8f;
+	
+	private boolean EDown = false;
+	private boolean QDown = false;
 	
 	//JetClient client;
 	
@@ -49,6 +52,8 @@ public class SkunkJets
 	int curJet = 0;
 	
 	private HealthBar healthBar = new HealthBar();
+	
+	int background = ImageLib.getImage("Images/background.jpg");
 
 	private Socket jetSocket;
 	PrintWriter out;
@@ -102,6 +107,8 @@ public class SkunkJets
 		mode = findDisplayMode(Display.getDisplayMode().getWidth(),
 			Display.getDisplayMode().getHeight(), Display.getDisplayMode().getBitsPerPixel());
 		Display.setDisplayModeAndFullscreen(mode);
+		//Display.setDisplayMode(mode);
+		//Display.setFullscreen(true);
 	}
 
 	/**
@@ -194,6 +201,8 @@ public class SkunkJets
 				{
 					if(canSpawnJet()) {
 						Jet newJet = new Jet(new Vector2f(p2w_x(Mouse.getX()), -1.0f), new Vector2f(0, 0.2f), true);
+						jet = newJet;
+						curJet = jets.size() - 1;
 						jets.add(newJet);
 						gameObjects.add(newJet);
 						lastJetSpawnTime = mainTimer.getTime();
@@ -261,10 +270,21 @@ public class SkunkJets
 			{
 			   explosions.add(new Explosion(gameObject.getPosition()));
 			   destroyedObjects.add(gameObject);
+			   if (gameObject instanceof Jet && gameObject.equals(jet))
+			   {
+			      curJet = jets.size() - 1;
+			      if (curJet < 0)
+			      {
+			         jet = null;
+			      }
+			      else
+			         jet = jets.get(curJet);
+			   }
 			}
-         if((gameObject instanceof Jet) &&
+			else if((gameObject instanceof Jet) &&
           (!gameObject.myTeam && gameObject.getPosition().y < -MIN_BASE_DISTANCE)) {
             System.err.println("Jet reached base at " + gameObject.getPosition().y);
+            explosions.add(new Explosion(gameObject.getPosition()));
             destroyedObjects.add(gameObject);
             healthBar.decrease();
          }
@@ -321,17 +341,21 @@ public class SkunkJets
 		GL11.glVertex2f(upperXBound, upperYBound);
 		GL11.glVertex2f(lowerXBound, upperYBound);
 		GL11.glEnd();
+		
+		ImageLib.drawImage(background, 0, 0, 0.0f, 550, 1000);
 
 		for (GameObject gameObject : gameObjects)
 		{
-			gameObject.draw();
+			if (DEBUG || gameObject.visible) gameObject.draw(this);
+			for (GameObject go : gameObjects)
+			{
+			   if (!go.myTeam && !gameObject.equals(go) && 
+			      gameObject.myTeam && gameObject.isVisible(go)) go.draw(this);
+			}
 		}
-		for (Jet jet : jets)
-		{
-		   jet.draw();
-		}
+		
 		for (Explosion obj : explosions)
-		   obj.draw();
+		   obj.draw(this);
 		
 		healthBar.draw();
 	}
@@ -339,51 +363,66 @@ public class SkunkJets
 	private void processKeyboard()
 	{
 		// check for speed changes
-		if (Keyboard.isKeyDown(Keyboard.KEY_W))
+		if (Keyboard.isKeyDown(Keyboard.KEY_W) && jet != null)
 		{
 			jet.speedUp();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_S))
+		if (Keyboard.isKeyDown(Keyboard.KEY_S) && jet != null)
 		{
 			jet.slowDown();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_D))
+		if (Keyboard.isKeyDown(Keyboard.KEY_D) && jet != null)
 		{
 			jet.turnRight();
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_A))
+		if (Keyboard.isKeyDown(Keyboard.KEY_A) && jet != null)
 		{
 			jet.turnLeft();
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_E))
 		{
-			curJet++;
-			if (curJet >= jets.size())
-			{
-				curJet = 0;
-			}
-			jet = jets.get(curJet);
+		   if  (!EDown)
+		   {
+		      EDown = true;
+		      curJet++;
+		      if (curJet >= jets.size())
+		      {
+		         curJet = 0;
+		      }
+		      if (jets.size() > 0)
+		         jet = jets.get(curJet);
+		   }
 		}
-		
-		if(isNewKeyPress(Keyboard.KEY_0)) {
-			healthBar.increase();
-		}
-		
-		if(isNewKeyPress(Keyboard.KEY_9)) {
-			healthBar.decrease();
-		}
-		
 		else if (Keyboard.isKeyDown(Keyboard.KEY_Q))
 		{
-			curJet--;
-			if (curJet < 0)
-			{
-				curJet = jets.size() - 1;
-			}
-			jet = jets.get(curJet);
+		   EDown = false;
+		   if (!QDown)
+		   {
+		      QDown = true;
+		      curJet--;
+		      if (curJet < 0)
+		      {
+		         curJet = jets.size() - 1;
+		      }
+		      if (jets.size() > 0)
+		         jet = jets.get(curJet);
+		   }
 		}
-		
+		else
+		{
+		   EDown = false;
+		   QDown = false;
+		}
+
+      if(isNewKeyPress(Keyboard.KEY_0)) {
+         healthBar.increase();
+      }
+      
+      if(isNewKeyPress(Keyboard.KEY_9)) {
+         healthBar.decrease();
+      }
+      
 		// check weapon switch
 		if (Keyboard.isKeyDown(Keyboard.KEY_1))
 		{
@@ -526,7 +565,7 @@ public class SkunkJets
 		
       GL11.glEnable(GL11.GL_TEXTURE_2D);
 		//sync frame (only works on windows)
-		Display.setVSyncEnabled(true);
+		//Display.setVSyncEnabled(true);
 	}
 
 	/**

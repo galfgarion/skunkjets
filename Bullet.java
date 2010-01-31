@@ -16,7 +16,7 @@ public class Bullet extends GameObject
 		this.setVelocity(velocity);
 	}
 
-	public void innerDraw() {
+	public void innerDraw(SkunkJets game) {
 		ImageLib.drawImage(img, 0f, 0f, -90f, 50, 50);
 	}
 

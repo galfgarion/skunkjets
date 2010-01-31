@@ -27,7 +27,7 @@ public class Explosion extends GameObject
    }
    
    @Override
-   protected void innerDraw() {
+   protected void innerDraw(SkunkJets game) {
       ImageLib.drawImage(curImg, 0.0f, 0.0f, 0.0f);
       // TODO Auto-generated method stub
    }

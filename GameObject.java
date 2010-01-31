@@ -7,8 +7,6 @@ public abstract class GameObject {
 	
 	private static final boolean DEBUG = false;
 	
-	public boolean myTeam;
-	
 	private Vector2f position;
 	private Vector2f velocity;
 	public int sprite;
@@ -104,8 +102,26 @@ public abstract class GameObject {
 		return collision;
 		
 	}	
-	
-	public void draw() {
+
+   protected static void drawCircle() {
+      final int numVertices = 60;
+
+      Vector2f vertices[] = new Vector2f[numVertices];
+
+      for (int i = 0; i < numVertices; i++) {
+         vertices[i] = new Vector2f();
+         vertices[i].x = (float) Math.cos(i * 2 * Math.PI / numVertices);
+         vertices[i].y = (float) Math.sin(i * 2 * Math.PI / numVertices);
+      }
+
+      GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+      for (int i = 0; i < numVertices; i++) {
+         GL11.glVertex2f(vertices[i].x, vertices[i].y);
+      }
+      GL11.glEnd();
+   }
+
+	public void draw(SkunkJets game) {
 		GL11.glPushMatrix();
 		{
 			GL11.glTranslatef(position.x, position.y, 0);
@@ -113,11 +129,11 @@ public abstract class GameObject {
 			float rotationRads = (float) Math.atan2(getVelocity().y, getVelocity().x);
 			GL11.glRotatef((float) (rotationRads * 180 / Math.PI), 0, 0, 1);
 			
-			this.innerDraw();
+			this.innerDraw(game);
 
 		}
 		GL11.glPopMatrix();
 	}
 
-	protected abstract void innerDraw();
+	protected abstract void innerDraw(SkunkJets game);
 }
