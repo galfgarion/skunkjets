@@ -4,6 +4,7 @@ import org.lwjgl.util.vector.Vector2f;
 public abstract class GameObject {
 	private Vector2f position;
 	private Vector2f velocity;
+	public int sprite;
 
 	public GameObject(Vector2f position, Vector2f velocity) {
 		assert position != null;
