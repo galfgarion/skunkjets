@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 
 public class ImageLib {
    
+   // Image library
    public static final int SIZE_FLOAT = 4;
    public static final int SIZE_INT = 4;
    static Hashtable OpenGLextensions;
