@@ -5,8 +5,20 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class Jet extends GameObject {
 	
-	public Jet(Vector2f position, Vector2f velocity) {
+	int img;
+	boolean myTeam;
+	
+	public Jet(Vector2f position, Vector2f velocity, boolean myTeam) {
 		super(position, velocity);
+		this.myTeam = myTeam;
+		if (myTeam)
+		{
+			img = ImageLib.getImage("Images/Jet blue.png");
+		}
+		else
+		{
+			img = ImageLib.getImage("Images/Jet red.png");
+		}
 	}
 	
 	public void speedUp() {
@@ -45,17 +57,8 @@ public class Jet extends GameObject {
 	
 	@Override
 	public void innerDraw() {
-		GL11.glColor3f(1.0f, 1.0f, 1.0f);
-		
-		GL11.glBegin(GL11.GL_QUADS);
-		{
-			GL11.glVertex2d(-0.05, -0.05);
-			GL11.glVertex2d(0.05, -0.05);
-			GL11.glVertex2d(0.05, 0.05);
-			GL11.glVertex2d(-0.05, 0.05);
-			//System.err.println("at pixel " + (-50 + position.x) + "," + (-50 + position.y));
-		}
-		GL11.glEnd();
+		float angle = myTeam ? 0 : 180;
+		ImageLib.drawImage(img, getPosition().x, getPosition().y, angle);
 	}
 
 }
