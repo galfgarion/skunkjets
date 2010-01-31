@@ -21,9 +21,14 @@ public class SkunkJets
 {
 	/** Intended display mode */
 	private DisplayMode mode;
-
-	// JetClient client;
-
+	
+	public float lowerXBound = -2/3f;
+	public float upperXBound = 2/3f;
+	public float lowerYBound = -1f;
+	public float upperYBound = 1f;
+	
+	//JetClient client;
+	
 	Cannon redCannon;
 	Jet jet;
 
@@ -31,6 +36,7 @@ public class SkunkJets
 	ProjectileType rocket = new RocketProjectile();
 	ProjectileType beam = new BeamProjectile();
 	LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
+	LinkedList<Explosion> explosions = new LinkedList<Explosion>();
 
 	private Socket jetSocket;
 	PrintWriter out;
@@ -88,11 +94,7 @@ public class SkunkJets
 			gameObjects.add(redCannon = new Cannon(new Vector2f(0, -1), 1 / 20f, 90).setColor(1.0f, 0.0f, 0.0f));
 			redCannon.setCurProjectile(rocket);
 			gameObjects.add(jet = new Jet(new Vector2f(0.5f, -1f), new Vector2f(0.2f, 0.1f), true));
-
-			// TODO testing
-			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0f, 0f), false));
-
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			gameObjects.add(new Jet(new Vector2f(0, 0), new Vector2f(0,0), true));
 		}
 		catch (Exception e)
 		{
@@ -206,24 +208,21 @@ public class SkunkJets
 		// down
 		float x = 2f * Mouse.getX() / mode.getWidth() - 1;
 		float y = 2f * Mouse.getY() / mode.getHeight() - 1;
-		redCannon
-				.setOrientation((float) (Math.atan2(y + 1, x) * 180 / Math.PI));
+		redCannon.setOrientation((float) (Math.atan2(y + 1, x) * 180 / Math.PI));
 	}
-
-	private void logic(double timeDelta)
-	{
+	
+	private void logic(double timeDelta) {
+	   ArrayList<GameObject> destroyedObjects = new ArrayList<GameObject>();
+	   ArrayList<Explosion> destroyedExplosions = new ArrayList<Explosion>();
 		for (GameObject gameObject : gameObjects)
-			gameObject.update(timeDelta);
-
-		ArrayList<GameObject> destroyedObjects = new ArrayList<GameObject>();
-		for (int i = 0; i < gameObjects.size(); i++)
 		{
-			for (int j = i + 1; j < gameObjects.size(); j++)
-			{
-				if (gameObjects.get(i) != redCannon
-						&& gameObjects.get(j) != redCannon
-						&& gameObjects.get(i).collide(gameObjects.get(j)))
-				{
+			if (gameObject.update(timeDelta)) destroyedObjects.add(gameObject);
+		}
+		
+		for(int i = 0; i < gameObjects.size(); i++) {
+			for(int j=i + 1; j < gameObjects.size(); j++) {
+				if(gameObjects.get(i) != redCannon && gameObjects.get(j) != redCannon &&
+						gameObjects.get(i).collide(gameObjects.get(j))) {
 					destroyedObjects.add(gameObjects.get(i));
 					destroyedObjects.add(gameObjects.get(j));
 				}
@@ -231,10 +230,18 @@ public class SkunkJets
 		}
 
 		// explode the objects
-		for (GameObject obj : destroyedObjects)
-		{
+		for(GameObject obj : destroyedObjects) {
+         explosions.add(new Explosion(obj.getPosition()));
 			gameObjects.remove(obj);
 		}
+		
+		for (Explosion obj : explosions)
+		{
+		   if (obj.update(timeDelta)) destroyedExplosions.add(obj);
+		}
+		
+		for (Explosion obj : destroyedExplosions)
+		   explosions.remove(obj);
 	}
 
 	private void render()
@@ -244,16 +251,18 @@ public class SkunkJets
 
 		GL11.glColor3f(0f, 0f, 0.5f);
 		GL11.glBegin(GL11.GL_QUADS);
-		GL11.glVertex2f(-2 / 3f, -1f);
-		GL11.glVertex2f(2 / 3f, -1f);
-		GL11.glVertex2f(2 / 3f, 1f);
-		GL11.glVertex2f(-2 / 3f, 1f);
+		GL11.glVertex2f(lowerXBound, lowerYBound);
+		GL11.glVertex2f(upperXBound, lowerYBound);
+		GL11.glVertex2f(upperXBound, upperYBound);
+		GL11.glVertex2f(lowerXBound, upperYBound);
 		GL11.glEnd();
 
 		for (GameObject gameObject : gameObjects)
 		{
 			gameObject.draw();
 		}
+		for (Explosion obj : explosions)
+		   obj.draw();
 	}
 
 	private void processKeyboard()
@@ -398,7 +407,9 @@ public class SkunkJets
 		GL11.glViewport(0, 0, mode.getWidth(), mode.getHeight());
 		// set clear color to black
 		GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		// sync frame (only works on windows)
+		
+      GL11.glEnable(GL11.GL_TEXTURE_2D);
+		//sync frame (only works on windows)
 		Display.setVSyncEnabled(true);
 	}
 

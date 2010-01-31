@@ -19,11 +19,13 @@ public class Bullet extends GameObject
 		ImageLib.drawImage(img, 0f, 0f, -90f);
 	}
 
-	public void update(double timeDelta)
+	public boolean update(double timeDelta)
 	{
 		// TODO Auto-generated method stub
 		Vector2f moveDelta = new Vector2f(getVelocity());
 		moveDelta.scale((float) timeDelta);
 		Vector2f.add(getPosition(), moveDelta, getPosition());
+      if (Math.abs(getPosition().x) > halfRangeX || Math.abs(getPosition().y) > halfRangeY) return true;
+      return false;
 	}
 }

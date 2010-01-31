@@ -2,6 +2,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 public abstract class GameObject {
+   public float halfRangeX = (2/3f) + 0.0001f;
+   public float halfRangeY = (1.0f) + 0.0001f;
 	
 	private static final boolean DEBUG = false;
 	
@@ -32,10 +34,13 @@ public abstract class GameObject {
 	}
 
 	// Override this
-	public void update(double timeDelta) {
+	// Note: true means out of bounds, false means still good
+	public boolean update(double timeDelta) {
 		Vector2f moveDelta = new Vector2f(velocity);
 		moveDelta.scale((float) timeDelta);
 		Vector2f.add(position, moveDelta, position);
+		if (Math.abs(position.x) > halfRangeX || Math.abs(position.y) > halfRangeY) return true;
+		return false;
 	}
 	
 	public boolean collide(GameObject other) {

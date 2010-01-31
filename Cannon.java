@@ -33,15 +33,13 @@ class Cannon extends GameObject
 		this.blue = blue;
 		return this;
 	}
+
 	public void setCurProjectile(ProjectileType curProjectile)
 	{
 		this.curProjectile = curProjectile;
 	}
 
-	@Override
-	public void update(double timeDelta) {
-		super.update(timeDelta);
-	}
+	public boolean update(double timeDelta) { return false; }
 
 	public double getOrientation()
 	{

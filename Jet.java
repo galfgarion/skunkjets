@@ -22,6 +22,15 @@ public class Jet extends GameObject {
 		}
 	}
 	
+	@Override
+	public boolean update(double timeDelta) {
+		Vector2f moveDelta = new Vector2f(getVelocity());
+		moveDelta.scale((float)timeDelta);
+		Vector2f.add(getPosition(), moveDelta, getPosition());
+      if (Math.abs(getPosition().x) > halfRangeX || Math.abs(getPosition().y) > halfRangeY) return true;
+      return false;
+	}
+	
 	public void speedUp() {
 		this.getVelocity().scale(70/69f);
 		float speed = this.getVelocity().length();
