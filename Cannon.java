@@ -11,7 +11,7 @@ class Cannon extends GameObject
 	private float radius;
 	private float red, green, blue;
 
-	private double lastFireTime = 0;
+	private double lastFireTime = -10000;
 
 	private ProjectileType curProjectile;
 	ArrayList<Bullet> bullets;
@@ -27,21 +27,20 @@ class Cannon extends GameObject
 		bullets = new ArrayList<Bullet>();
 	}
 
-	public Cannon setColor(float red, float green, float blue)
-	{
+	public Cannon setColor(float red, float green, float blue) {
 		this.red = red;
 		this.green = green;
 		this.blue = blue;
 		return this;
 	}
-
 	public void setCurProjectile(ProjectileType curProjectile)
 	{
 		this.curProjectile = curProjectile;
 	}
 
-	public void update(double timeDelta)
-	{
+	@Override
+	public void update(double timeDelta) {
+		super.update(timeDelta);
 	}
 
 	public double getOrientation()
@@ -54,15 +53,22 @@ class Cannon extends GameObject
 		this.orientation = orientation;
 	}
 
-	public boolean canFire(double time)
+	public boolean canFire()
 	{
-		return ((time - lastFireTime) >= (1.0f / curProjectile.getFiringRate()))
+		System.out.println((SkunkJets.mainTimer.getTime() - lastFireTime) + " " + (1.0f / curProjectile.getFiringRate()));
+		return ((SkunkJets.mainTimer.getTime() - lastFireTime) >= (1.0f / curProjectile.getFiringRate()))
 			&& (curProjectile.count < curProjectile.maxBullets);
 	}
 
-	public Bullet fire(double time)
-	{
-		lastFireTime = time;
+	public Bullet fire() {
+		assert canFire();
+		
+		double oldLastFireTime = lastFireTime;
+		System.out.println("last fire time: " + lastFireTime);		
+		lastFireTime = SkunkJets.mainTimer.getTime();
+		System.out.println("now: " + lastFireTime);
+		System.out.println("difference: " + (lastFireTime - oldLastFireTime));
+		
 		float velX = (float) (curProjectile.getSpeed() * Math.cos(orientation * DEG_TO_RAD));
 		float velY = (float) (curProjectile.getSpeed() * Math.sin(orientation * DEG_TO_RAD));
 
@@ -70,6 +76,7 @@ class Cannon extends GameObject
 		//TODO fix start of bullet
 		Bullet bullet = curProjectile.fire(new Vector2f(getPosition()), velocity);
 		bullets.add(bullet);
+		
 		return bullet;
 	}
 
