@@ -11,7 +11,7 @@ public class JetServer {
 
 	public JetServer() throws IOException {
 		// TODO Auto-generated constructor stub
-
+ 
 		boolean listening = true;
 
 		try {
