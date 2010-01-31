@@ -9,7 +9,7 @@ public abstract class Projectile extends GameObject
 	protected Vector2f velocity;
 	protected float firingRate;
 	protected int count;
-	//IMG img;
+	protected int img;
 	ArrayList<Bullet> bullets;
 
 	public Projectile(Vector2f position, Vector2f velocity)

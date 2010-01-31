@@ -8,6 +8,7 @@ public class RocketProjectile extends Projectile
 	{
 		super(position, velocity);
 		firingRate = 0.5f;
+		//img = ;
 	}
 
 }

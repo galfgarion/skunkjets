@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path=""/>
+	<classpathentry excluding="Images/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/blackfire/newWorkspace/lwjgl-2.2.2/jar/AppleJavaExtensions.jar"/>
-	<classpathentry kind="lib" path="/home/blackfire/newWorkspace/lwjgl-2.2.2/jar/jinput.jar"/>
-	<classpathentry kind="lib" path="/home/blackfire/newWorkspace/lwjgl-2.2.2/jar/lwjgl.jar"/>
-	<classpathentry kind="lib" path="/home/blackfire/newWorkspace/lwjgl-2.2.2/jar/lwjgl-debug.jar"/>
-	<classpathentry kind="lib" path="/home/blackfire/newWorkspace/lwjgl-2.2.2/jar/lwjgl_test.jar"/>
-	<classpathentry kind="lib" path="/home/blackfire/newWorkspace/lwjgl-2.2.2/jar/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="/home/blackfire/newWorkspace/lwjgl-2.2.2/jar/lwjgl_util_applet.jar"/>
-	<classpathentry kind="lib" path="/home/blackfire/newWorkspace/lwjgl-2.2.2/jar/lzma.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
