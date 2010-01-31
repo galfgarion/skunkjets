@@ -58,7 +58,7 @@ class Cannon extends GameObject
 		float velY = (float) (projectileSpeed * Math.sin(orientation * DEG_TO_RAD));
 
 		Vector2f velocity = new Vector2f(velX, velY);
-		Projectile bullet = new RocketProjectile(getPosition(), velocity);
+		Projectile bullet = new RocketProjectile(new Vector2f(getPosition()), velocity);
 
 		return bullet;
 	}
