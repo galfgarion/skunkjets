@@ -14,19 +14,24 @@ public class ImageLib {
    public static final int SIZE_INT = 4;
    static Hashtable OpenGLextensions;
    
-   static Hashtable<Integer,GLImage> Images = new Hashtable<Integer,GLImage>();
+   static Hashtable<Integer,GLImage> Images;
    static int keyValCurrent;
+   
+   public ImageLib() 
+   {
+      Images = new Hashtable<Integer,GLImage>();
+   }
    
    // This class is to present a small level of abstraction between the
    // game management code and the display of each 2D sprite
-   public static int getImage(String filename)
+   public int getImage(String filename)
    {
       GLImage img = loadImage(filename);
       Images.put(new Integer(keyValCurrent++), img);
       return keyValCurrent - 1;
    }
    
-   public static int drawImage(int imgVal, int x, int y, float angle)
+   public int drawImage(int imgVal, int x, int y, float angle)
    {
       Integer imgKey = new Integer(imgVal);
       GLImage img;
@@ -37,7 +42,7 @@ public class ImageLib {
       return 0;
    }
    
-   public static int drawImage(int imgVal, int x, int y, float angle, int w, int h)
+   public int drawImage(int imgVal, int x, int y, float angle, int w, int h)
    {
       Integer imgKey = new Integer(imgVal);
       GLImage img;
